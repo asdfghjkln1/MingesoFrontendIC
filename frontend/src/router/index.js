@@ -5,17 +5,11 @@ import ListaProductos from '@/components/ListaProductos'
 
 Vue.use(Router)
 
+const routes = [
+  { path: '/', component: HelloWorld },
+  { path: '/productos', component: ListaProductos}
+]
+
 export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
-    },
-    {
-      path: '/productos',
-      name: 'ListaProductos',
-      component: ListaProductos
-    }
-  ]
+  routes
 })

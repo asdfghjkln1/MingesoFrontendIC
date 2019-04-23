@@ -2,10 +2,10 @@
   <div id="listado">
     <div class="container">
       <div class="row">
-        <h2>Lista productos</h2>
+        <h2 id="titulo">Listado de productos</h2>
       </div>
-      <div class="row table-responsive">
-        <table class="table">
+      <div class="row">
+        <table class="table table-striped table-dark">
           <tr>
             <th>Código</th>
             <th>Nombre Producto</th>
@@ -13,7 +13,7 @@
             <th>Categoría</th>
             <th>Fecha Expiración</th>
           </tr>
-        <tbody class="table table-hover">
+        <tbody>
           <tr v-for="producto in productos">
             <td>{{producto.codigo}}</td>
             <td>{{producto.nombre}}</td>
@@ -29,6 +29,14 @@
 </template>
 
 <script>
+  import axios from 'axios';
+
+  const url = 'http://localhost:8090';
+  const axiosInst = axios.create({
+    baseURL: url,
+    timeout: 10000
+  });
+
   export default{
     name: 'ListaProductos',
     data(){
@@ -38,21 +46,25 @@
       }
     },
     created() {
-      //this.fetchProductos();
+      this.fetchProductos();
     },
     methods: {
       fetchProductos(){
-        this.http.get('http://localhost:8090/productos', function(data, status){
-          if(status == 200){
-            this.productos = data;
-          }
-          else{
-            console.log("ERROR FETCH (temporal)");
-          }
-        });
+        axiosInst.get('productoes').then(
+          response => {
+            if(response.status == 200){
+              this.productos = response.data._embedded.productoes;
+            }
+            else{
+              console.log("ERROR FETCH (temporal)");
+            }
+          }).catch(error => {
+            console.log("Ha ocurrido un error");
+            console.log(error.toString())
+        })
       },
       filtrarCategoria(categoria){
-        this.http.get('http://localhost:8090/productos/categoria', function(data, status){
+        axios.get('http://localhost:8090/productoes/categoria', function(data, status){
           if(status == 200){
             this.productos = data;
           }
@@ -65,3 +77,21 @@
 
   }
 </script>
+<style scoped>
+  #titulo{
+    padding: 10px 5px 5px 30px;
+  }
+  .container{
+    padding: 50px;
+  }
+
+  #listado{
+    margin: 0vh 10vh 0vh 10vh;
+    background-color: ghostwhite;
+    height: 100vh;
+    -webkit-box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
+    -moz-box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
+    box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
+
+  }
+</style>
