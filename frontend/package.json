@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "pm2": "pm2 start ./src/index.js --watch=true", /** No esta confirmado que funciona **/
     "start": "npm run dev",
     "test": "npm run unit",
     "build": "node build/build.js"

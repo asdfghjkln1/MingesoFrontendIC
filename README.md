@@ -1,6 +1,11 @@
-# frontend
-
+# Changelog Frontend
 > Mingeso IC frontend
+
+Version v1.0.0 04/05/19
+- Se hace deploy en Digital Ocean
+- Se crea script shell para IC (en pruebas)
+
+# Tutorial
 
 ## Build Setup
 
