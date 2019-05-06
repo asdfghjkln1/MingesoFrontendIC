@@ -31,7 +31,7 @@
 <script>
   import axios from 'axios';
 
-  const url = 'http://localhost:8090';
+  const url = 'http://159.65.3.243:8090';
   const axiosInst = axios.create({
     baseURL: url,
     timeout: 10000
