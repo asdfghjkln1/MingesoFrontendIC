@@ -34,8 +34,8 @@
   const url = 'http://159.65.3.243:8090';
   const headers = {
       'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    },
+      'Content-Type': 'application/json'
+  };
   const axiosInst = axios.create({
     baseURL: url,
     timeout: 10000,
