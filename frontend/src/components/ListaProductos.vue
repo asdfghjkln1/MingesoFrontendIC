@@ -32,9 +32,14 @@
   import axios from 'axios';
 
   const url = 'http://159.65.3.243:8090';
+  headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json',
+    },
   const axiosInst = axios.create({
     baseURL: url,
-    timeout: 10000
+    timeout: 10000,
+    headers: headers
   });
 
   export default{
