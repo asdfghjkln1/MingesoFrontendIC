@@ -32,7 +32,7 @@
   import axios from 'axios';
 
   const url = 'http://159.65.3.243:8090';
-  headers: {
+  const headers = {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
     },
