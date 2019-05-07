@@ -85,13 +85,4 @@
     padding: 50px;
   }
 
-  #listado{
-    margin: 0vh 10vh 0vh 10vh;
-    background-color: ghostwhite;
-    height: 100vh;
-    -webkit-box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
-    -moz-box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
-    box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
-
-  }
 </style>

@@ -2,7 +2,15 @@
   <div id="app">
     <head><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"></head>
     <Navbar></Navbar>
-    <router-view/>
+    <div id="main-container">
+      <router-view/>
+      <footer>
+        <p>Creador por {{subtitle}}:</p><br>
+        <ul v-for="author in authors">
+          <li>{{author}}</li>
+        </ul>
+      </footer>
+    </div>
   </div>
 </template>
 
@@ -12,6 +20,10 @@ import Navbar from './components/Navbar.vue'
 
 export default {
   name: 'App',
+  data (){ return {
+    subtitle: 'Mingeso B-2 2019 Grupo 1',
+      authors: ['Vicente Rivera', 'Sebastián Salazar', 'Francisco Diaz', 'Diego Salazar'],
+  }},
   components: {
     Navbar
   }
@@ -26,6 +38,28 @@ export default {
   text-align: center;
   color: #2c3e50;
   background-color: azure;
+}
+
+footer {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #2c3e50;
+  padding: 50px;
+}
+
+footer *{
+  color: white;
+  font-size: 14px;
+}
+
+#main-container{
+  margin: 0vh 10vh 0vh 10vh;
+  background-color: ghostwhite;
+  height: 200vh;
+  -webkit-box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
+  -moz-box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
+  box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
 }
 
 </style>

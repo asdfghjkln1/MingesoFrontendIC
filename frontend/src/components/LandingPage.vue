@@ -1,6 +1,6 @@
-<template xmlns:v-for="http://www.w3.org/1999/xhtml">
+<template>
   <div id="frontpage">
-    <h1>{{ title }}</h1>
+    <h1 class="title">{{ title }}</h1>
     <h2>  < < {{ subtitle}} > ></h2>
     <ul v-for="author in authors">
       <li><h5>{{ author}} </h5></li>
@@ -14,7 +14,7 @@ export default {
     return {
       subtitle: 'Mingeso B-2 Grupo 1',
       title: 'Iteración 0: Integración Contínua',
-      authors: ['Vicente Rivera', 'Sebastián Salazar', 'Francisco Diaz'],
+      authors: ['Vicente Rivera', 'Sebastián Salazar', 'Francisco Diaz', 'Diego Salazar'],
     }
   }
 }
@@ -23,14 +23,13 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-#frontpage {
-  padding: 50px;
-  margin: 5px;
-}
-
 #frontpage h1{
   font-size: 48px;
   padding: 5px;
+}
+
+.title{
+  padding: 10px 5px 5px 30px;
 }
 
 h1, h2 {
@@ -39,10 +38,6 @@ h1, h2 {
 ul {
   list-style-type: none;
   padding: 10px;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
 }
 a {
   color: #42b983;
