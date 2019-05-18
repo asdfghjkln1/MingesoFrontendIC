@@ -1,4 +1,5 @@
-import Vue from 'vue'
+'use strict'
+const Vue = require('vue')
 import App from './App.vue'
 import router from './router'
 
