@@ -2,8 +2,8 @@
 module.exports = {
   apps : [{
     name: 'frontend',
-    script: 'frontend/src/main.js',
-
+    script: 'npm',
+    args: 'run dev',
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
     instances: 1,
     autorestart: true,
@@ -33,7 +33,7 @@ module.exports = {
       // pre-deploy action
       'pre-deploy-local': "echo 'This is a local executed command'",
       // post-deploy action
-      'post-deploy' : 'cd frontend && npm install && cd .. && pm2 reload ecosystem.config.js --env production'
+      'post-deploy' : 'cd frontend && npm install && cd .. && pm2 reload ecosystem.config.js --env production && cd frontend'
     }
   }
 };
