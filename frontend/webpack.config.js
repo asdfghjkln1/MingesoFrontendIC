@@ -11,6 +11,11 @@ module.exports = {
       { test: /\.css$/, use: ['vue-style-loader', 'css-loader']},
     ]
   },
+  resolve: {
+    alias: {
+      vue: 'vue/dist/vue.js'
+    }
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
