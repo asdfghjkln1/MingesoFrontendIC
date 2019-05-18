@@ -1,7 +1,7 @@
 'use strict'
 const Vue = require('vue')
-import App from './App.vue'
-import router from './router'
+const App = require('./App.vue')
+const router = require('./router')
 
 Vue.config.productionTip = true
 
