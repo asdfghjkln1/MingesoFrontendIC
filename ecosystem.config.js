@@ -1,3 +1,4 @@
+
 module.exports = {
   apps : [{
     name: 'frontend',
@@ -32,7 +33,7 @@ module.exports = {
       // pre-deploy action
       'pre-deploy-local': "echo 'This is a local executed command'",
       // post-deploy action
-      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production'
+      'post-deploy' : 'cd frontend && npm install && pm2 reload ecosystem.config.js --env production'
     }
   }
 };
