@@ -16,6 +16,9 @@
             <li class="nav-item">
               <router-link to="/producto/agregar" class="nav-link">Agregar un Producto</router-link>
             </li>
+            <li class="nav-item">
+              <router-link to="/rack" class="nav-link">Rack</router-link>
+            </li>
           </ul>
           <form id="buscar" class="form-inline">
             <input class="form-control mr-sm-2" type="search" placeholder="ID del producto..." aria-label="Buscar un producto">
