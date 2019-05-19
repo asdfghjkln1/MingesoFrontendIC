@@ -21,7 +21,7 @@ module.exports = {
   deploy : {
     production : {
       user : 'root',
-      host : '165.22.249.5',
+      host : 'localhost',
       key : '~/.ssh/id_rsa.pub',
       ref  : 'origin/master',
       repo : 'git@github.com:asdfghjkln1/MingesoFrontendIC.git',
