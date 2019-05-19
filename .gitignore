@@ -1,3 +1,5 @@
 .git/
 frontend/.idea/
 frontend/node_modules/
+
+\.idea/
