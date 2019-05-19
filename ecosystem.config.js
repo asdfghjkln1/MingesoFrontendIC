@@ -21,7 +21,7 @@ module.exports = {
   deploy : {
     production : {
       user : 'root',
-      host : 'localhost',
+      host : '165.22.249.5',
       key : '~/.ssh/id_rsa.pub',
       ref  : 'origin/master',
       repo : 'git@github.com:asdfghjkln1/MingesoFrontendIC.git',
@@ -31,7 +31,7 @@ module.exports = {
       // eg: placing configurations in the shared dir etc
       'post-setup': "ls -la",
       // pre-deploy action
-      'pre-deploy-local': "echo 'This is a local executed command'",
+      'pre-deploy-local': "git reset --hard",
       // post-deploy action
       'post-deploy' : 'cd frontend && npm install && cd .. && pm2 reload ecosystem.config.js --env production && sudo service nginx restart'
     }
