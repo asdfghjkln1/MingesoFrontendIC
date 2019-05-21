@@ -1,0 +1,29 @@
+{
+  "resources" : [
+    { "name": "Piso 1", "id": "F1", "expanded": true, "childen" : [
+      { "name": "101", "id": "101"},
+      {"name": "102", "id": "102"},
+      {"name": "103", "id": "103"},
+      {"name": "104", "id": "104"},
+      {"name": "105", "id": "105"} ]
+    },
+    { "name": "Piso 2", "id": "F2", "expanded": true, "childen" : [
+      {"name": "201", "id": "201"},
+      {"name": "202", "id": "202"},
+      {"name": "203", "id": "203"},
+      {"name": "204", "id": "204"}]
+    },
+    { "name": "Piso 3", "id": "F3", "expanded": false, "childen" : [
+      {"name": "301", "id": "301"},
+      {"name": "302", "id": "302"},
+      {"name": "303", "id": "303"}]
+    }
+  ],
+  "events" : [
+    { "id": 1, "start": "2019-05-23T00:00:00", "end": "2019-05-26T00:00:00", "text": "Pepe", "resource": "101"},
+    { "id": 2, "start": "2019-05-22T00:00:00", "end": "2019-05-29T00:00:00", "text": "Pepito", "resource": "101"},
+    { "id": 3, "start": "2019-04-19T00:00:00", "end": "2019-04-23T00:00:00", "text": "Juanito", "resource": "201"},
+    { "id": 4, "start": "2019-06-02T00:00:00", "end": "2019-06-03T00:00:00", "text": "Pedrito", "resource": "302"},
+    { "id": 5, "start": "2019-05-25T00:00:00", "end": "2019-05-26T00:00:00", "text": "Jorgito", "resource": "101"}
+  ]
+}

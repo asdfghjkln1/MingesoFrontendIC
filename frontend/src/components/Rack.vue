@@ -1,15 +1,44 @@
 <template>
-  <DayPilotScheduler id="dp" :config="config" ref="scheduler" />
+  <div id="Scheduler">
+    <div class="scheduler-container">
+      <div id="fechas" class="date-container">
+        <input type="date" id="inicio" v-on:change="StartDateChange" value="">
+        <input type="date" id="fin" v-on:change="StartDateChange">
+      </div>
+      <DayPilotScheduler id="dp" :config="config" ref="scheduler" />
+    </div>
+  </div>
 </template>
 
 <script>
   import {DayPilot, DayPilotScheduler} from 'daypilot-pro-vue'
   import Vue from 'vue'
+  import axios from 'axios';
+
+  const url = 'http://159.65.3.243:8090/';
+  const axiosInst = axios.create({
+    baseURL: url,
+    timeout: 10000
+  });
+
+  /*var fechas = $('#fechas').daterangepicker({
+    opens: 'left'
+  }, function(start, end, label) {
+    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+  });*/
 
   export default {
     name: 'Scheduler',
     data: function() {
       return {
+        events: [
+            // { id: 1, start: "2018-10-01T00:00:00", end: "2018-10-05T00:00:00", text: "Event 1", resource: "R1" },
+            { id: 1, start: DayPilot.Date.today().addDays(2), end: DayPilot.Date.today().addDays(5), text: "Pepe", resource: "101"},
+            { id: 2, start: "2019-05-22T00:00:00", end: "2019-05-29T00:00:00", text: "Pepito", resource: "101"},
+            { id: 3, start: "2019-04-19T00:00:00", end: "2019-04-23T00:00:00", text: "Juanito", resource: "201"},
+            { id: 4, start: "2019-06-02T00:00:00", end: "2019-06-03T00:00:00", text: "Pedrito", resource: "302"},
+            { id: 5, start: "2019-05-25T00:00:00", end: "2019-05-26T00:00:00", text: "Jorgito", resource: "101"}
+          ],
         config: {
           locale: "es-es",
           cellWidthSpec: "Fixed",
@@ -86,18 +115,61 @@
       }
     },
     methods: {
+      StartDateChange() {
+        let inicio = document.getElementById("inicio").value;
+        let fin = document.getElementById("fin").value;
+        if (inicio > fin) {
+          alert("Seleccione una fecha válida");
+          return;
+        }
+        this.config.events = [];
+        const timeDiff = Math.abs(Date.parse(inicio) - Date.parse(fin));
+        const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        alert("Dias: " + days);
+        this.config.days = days + 1;
+        this.config.startDate = inicio;
+        const selected_events = [];
+        for (event in this.events) {
+          if (event > inicio && event < fin) {
+            selected_events.push(event);
+          }
+        }
+        Vue.set(this.config, "events", selected_events)
+      },
       loadEvents() {
-        const events = [
-          // { id: 1, start: "2018-10-01T00:00:00", end: "2018-10-05T00:00:00", text: "Event 1", resource: "R1" },
-          { id: 2, start: DayPilot.Date.today().addDays(2), end: DayPilot.Date.today().addDays(5), text: "Event 1", resource: "R2"}
-        ];
-        Vue.set(this.config, "events", events);
+        Vue.set(this.config, "events", this.events);
+      },
+      loadInitialRange() {
+        let inicio = document.getElementById("inicio");
+        let fin = document.getElementById("fin");
+        let date_inicio = this.config.startDate;
+        let days = this.config.days;
+        let date_fin = date_inicio.addDays(days);
+
+        inicio.value = date_inicio.value.split("T")[0];
+        fin.value = date_fin.value.split("T")[0];
       },
       loadResources() {
+
         const resources = [
-          {name: "Resource 1", id: "R1"},
-          {name: "Resource 2", id: "R2"},
-          {name: "Resource 3", id: "R3"}
+          { name: "Piso 1", id: "F1", expanded: true, childen : [
+            { name: "101", id: "101"},
+            {name: "102", id: "102"},
+            {name: "103", id: "103"},
+            {name: "104", id: "104"},
+            {name: "105", id: "105"} ]
+          },
+          { name: "Piso 2", id: "F2", expanded: true, childen : [
+            {name: "201", id: "201"},
+            {name: "202", id: "202"},
+            {name: "203", id: "203"},
+            {name: "204", id: "204"}]
+          },
+          { name: "Piso 3", id: "F3", expanded: false, childen : [
+            {name: "301", id: "301"},
+            {name: "302", id: "302"},
+            {name: "303", id: "303"}]
+          }
         ];
         Vue.set(this.config, "resources", resources);
       }
@@ -105,8 +177,15 @@
     mounted: function() {
       this.loadResources();
       this.loadEvents();
-
-      this.scheduler.message("Welcome!");
+      this.loadInitialRange();
     }
   }
 </script>
+
+<style scoped>
+  .scheduler-container{
+    padding: 30px 10px 30px 10px;
+    margin-top: 20px;
+    align-content: center;
+  }
+</style>
