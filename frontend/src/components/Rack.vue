@@ -2,10 +2,18 @@
   <div id="Scheduler">
     <div class="scheduler-container">
       <div id="fechas" class="date-container">
-        <input type="date" id="inicio" v-on:change="StartDateChange" value="">
+        <input type="date" id="inicio" v-on:change="StartDateChange">
         <input type="date" id="fin" v-on:change="StartDateChange">
       </div>
       <DayPilotScheduler id="dp" :config="config" ref="scheduler" />
+    </div>
+    <div><h2>Test model</h2>
+      <h4>Eventos: </h4>
+      <ul v-for="event in events">
+        <li>{{ event }}</li>
+      </ul>
+      <h4>Pisos: </h4>
+      <div> {{ resources }}</div>
     </div>
   </div>
 </template>
@@ -15,7 +23,7 @@
   import Vue from 'vue'
   import axios from 'axios';
 
-  const url = 'http://159.65.3.243:8090/';
+  const url = "http://127.0.0.1:3000/"; //'http://159.65.3.243:8090/';
   const axiosInst = axios.create({
     baseURL: url,
     timeout: 10000
@@ -31,14 +39,8 @@
     name: 'Scheduler',
     data: function() {
       return {
-        events: [
-            // { id: 1, start: "2018-10-01T00:00:00", end: "2018-10-05T00:00:00", text: "Event 1", resource: "R1" },
-            { id: 1, start: DayPilot.Date.today().addDays(2), end: DayPilot.Date.today().addDays(5), text: "Pepe", resource: "101"},
-            { id: 2, start: "2019-05-22T00:00:00", end: "2019-05-29T00:00:00", text: "Pepito", resource: "101"},
-            { id: 3, start: "2019-04-19T00:00:00", end: "2019-04-23T00:00:00", text: "Juanito", resource: "201"},
-            { id: 4, start: "2019-06-02T00:00:00", end: "2019-06-03T00:00:00", text: "Pedrito", resource: "302"},
-            { id: 5, start: "2019-05-25T00:00:00", end: "2019-05-26T00:00:00", text: "Jorgito", resource: "101"}
-          ],
+        resources : [],
+        events: [],
         config: {
           locale: "es-es",
           cellWidthSpec: "Fixed",
@@ -118,26 +120,26 @@
       StartDateChange() {
         let inicio = document.getElementById("inicio").value;
         let fin = document.getElementById("fin").value;
+        if(!inicio || !fin){
+          return false;
+        }
         if (inicio > fin) {
           alert("Seleccione una fecha válida");
-          return;
+          return false;
         }
-        this.config.events = [];
         const timeDiff = Math.abs(Date.parse(inicio) - Date.parse(fin));
         const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
         alert("Dias: " + days);
         this.config.days = days + 1;
         this.config.startDate = inicio;
-        const selected_events = [];
-        for (event in this.events) {
-          if (event > inicio && event < fin) {
-            selected_events.push(event);
+        let todos = this.events;
+        this.events = [];
+        for (event in todos) {
+          if (event.start < fin && event.end > inicio) {
+            this.events.push(event);
           }
         }
-        Vue.set(this.config, "events", selected_events)
-      },
-      loadEvents() {
-        Vue.set(this.config, "events", this.events);
+        this.loadEvents();
       },
       loadInitialRange() {
         let inicio = document.getElementById("inicio");
@@ -148,10 +150,24 @@
 
         inicio.value = date_inicio.value.split("T")[0];
         fin.value = date_fin.value.split("T")[0];
+
       },
       loadResources() {
-
-        const resources = [
+        var self = this;
+        axiosInst.get(url + 'resources').then(
+          response => {
+            if(response.status === 200){
+              self.resources = response.data;
+              Vue.set(self.config, "resources", self.resources);
+            }
+            else{
+              console.log("ERROR STATUS != 200");
+            }
+          }).catch(error => {
+          console.log("Ha ocurrido un error");
+          console.log(error.toString())
+        });
+        /*const resources = [
           { name: "Piso 1", id: "F1", expanded: true, childen : [
             { name: "101", id: "101"},
             {name: "102", id: "102"},
@@ -170,8 +186,23 @@
             {name: "302", id: "302"},
             {name: "303", id: "303"}]
           }
-        ];
-        Vue.set(this.config, "resources", resources);
+        ];*/
+      },
+      loadEvents(){
+        var self = this;
+        axiosInst.get(url + 'events').then(
+          response => {
+            if(response.status === 200){
+              self.events = response.data;
+              Vue.set(self.config, "events", self.events);
+            }
+            else{
+              console.log("ERROR STATUS != 200");
+            }
+          }).catch(error => {
+          console.log("Ha ocurrido un error en loadEvents");
+          console.log(error.toString())
+        });
       }
     },
     mounted: function() {
