@@ -2,8 +2,8 @@
   <div id="Scheduler">
     <div class="scheduler-container">
       <div id="fechas" class="date-container">
-        <input type="date" id="inicio" v-on:change="StartDateChange">
-        <input type="date" id="fin" v-on:change="StartDateChange">
+        <input type="date" id="inicio" v-on:change="DateChange">
+        <input type="date" id="fin" v-on:change="DateChange">
       </div>
       <DayPilotScheduler id="dp" :config="config" ref="scheduler" />
     </div>
@@ -102,10 +102,20 @@
           rowHeaderWidth: 120,
           rowHeaderWidthAutoFit: false,
           rowMinHeight: 50,
+          onBeforeEventRender: function(args) {
+            if(args.data.tipo === "Empresa"){
+              args.data.barColor = "red"
+            }else if(args.data.tipo === "Particular"){
+              args.data.barColor = "blue"
+            }
+          },
+          /*rowHeaderColumns: [
+            { title: 'Habitación', width: '60'},
+            { title: 'Tipo', width: '50'},
+            { title: 'Estado', width : '70'}
+          ],*/
         },
       }
-    },
-    props: {
     },
     components: {
       DayPilotScheduler
@@ -117,7 +127,7 @@
       }
     },
     methods: {
-      StartDateChange() {
+      DateChange() {
         let inicio = document.getElementById("inicio").value;
         let fin = document.getElementById("fin").value;
         if(!inicio || !fin){
@@ -139,7 +149,8 @@
             this.events.push(event);
           }
         }
-        this.loadEvents();
+        //this.loadEvents();
+        this.scheduler.update()
       },
       loadInitialRange() {
         let inicio = document.getElementById("inicio");
@@ -158,7 +169,7 @@
           response => {
             if(response.status === 200){
               self.resources = response.data;
-              Vue.set(self.config, "resources", self.resources);
+              this.scheduler.update({resources : self.resources});
             }
             else{
               console.log("ERROR STATUS != 200");
@@ -194,7 +205,7 @@
           response => {
             if(response.status === 200){
               self.events = response.data;
-              Vue.set(self.config, "events", self.events);
+              this.scheduler.update({events : self.events});
             }
             else{
               console.log("ERROR STATUS != 200");
