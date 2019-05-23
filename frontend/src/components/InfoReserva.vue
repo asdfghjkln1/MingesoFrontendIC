@@ -18,21 +18,21 @@
             </tr>
             <tr>
               <td colspan="1"> Nombre </td>
-              <td colspan="3"> {{ reserva.nombre }}</td>
+              <td colspan="3"> {{ reserva.text }}</td>
             </tr>
             <tr>
               <td colspan="1"> Tipo habitación </td>
-              <td colspan="3"> {{ reserva.tipo_habitacion }}</td>
+              <td colspan="3"> {{ reserva.tipo }}</td>
             </tr>
             <tr>
               <td colspan="1"> Inicio reserva </td>
-              <td colspan="1"> {{ reserva.inicio }}</td>
+              <td colspan="1"> {{ reserva.start }}</td>
               <td colspan="1"> Fin reserva </td>
-              <td colspan="1"> {{ reserva.fin }}</td>
+              <td colspan="1"> {{ reserva.end }}</td>
             </tr>
             <tr>
               <td colspan="1"> Subtotal reserva </td>
-              <td colspan="3"> {{ reserva.precio }}</td>
+              <td colspan="3"> {{ reserva.total }}</td>
             </tr>
             <tr></tr>
           </template>
@@ -62,7 +62,9 @@
 
 <script>
   import axios from 'axios';
-  const url = 'http://159.65.3.243:8090/';
+  //const url = 'http://159.65.3.243:8090/';
+  const url = 'http://127.0.0.1:3000/';
+
   const axiosInst = axios.create({
     baseURL: url,
     timeout: 10000
@@ -75,11 +77,11 @@ export default {
       reservas: [{
         id : '',
         codigo: '',
-        nombre: '',
-        tipo_habitacion: '',
-        inicio: '',
-        fin: '',
-        precio_reserva: '',
+        text: '',
+        tipo: '',
+        start: '',
+        end: '',
+        total: '',
       }]
     }
   },
@@ -94,9 +96,9 @@ export default {
     getReservas(){
       axiosInst.get(url + '/reservas/' + this.codigo_reserva).then(
         response => {
-          if(response.status == 200){
+          if(response.status = 200){
             console.log("Insertado exitósamente")
-            this.reservas = response.data;
+            this.filtroCodigoTests(response.data);
             this.calcularTotal();
           }
           else{
@@ -107,6 +109,17 @@ export default {
         console.log(error.toString())
       })
     },
+    filtroCodigoTests( data ){
+      let filtrados = [];
+      for( reserva in data){
+        console.log("cod_reserva: "+reserva.codigo + " = "+this.codigo_reserva);
+        if(reserva.codigo === this.codigo_reserva){
+          filtrados.push(reserva);
+        }
+      }
+      console.log(filtrados.toString());
+      this.reservas = filtrados;
+    }
   },
   mounted: function(){
     this.getReservas();

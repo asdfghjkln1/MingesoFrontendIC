@@ -11,19 +11,9 @@
         <div class="navbar-collapse collapse show" id="items">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <router-link to="/productos" class="nav-link">Listado Productos <span class="sr-only">(current)</span></router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/producto/agregar" class="nav-link">Agregar un Producto</router-link>
-            </li>
-            <li class="nav-item">
               <router-link to="/rack" class="nav-link">Rack</router-link>
             </li>
           </ul>
-          <form id="buscar" class="form-inline">
-            <input class="form-control mr-sm-2" type="search" placeholder="ID del producto..." aria-label="Buscar un producto">
-            <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
-          </form>
         </div>
       </nav>
     </nav>

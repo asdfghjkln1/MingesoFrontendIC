@@ -7,20 +7,13 @@
       </div>
       <DayPilotScheduler id="dp" :config="config" ref="scheduler" />
     </div>
-    <div><h2>Test model</h2>
-      <h4>Eventos: </h4>
-      <ul v-for="event in events">
-        <li>{{ event }}</li>
-      </ul>
-      <h4>Pisos: </h4>
-      <div> {{ resources }}</div>
-    </div>
+    <ModalReserva v-on:confirm="nuevaReserva" v-bind:start="sel_start" v-bind:end="sel_end" v-bind:resource="sel_resource" v-bind:total="sel_total" v-show="insertModalVisible" @close="closeModal"/>
   </div>
 </template>
 
 <script>
   import {DayPilot, DayPilotScheduler} from 'daypilot-pro-vue'
-  import Vue from 'vue'
+  import ModalReserva from './ModalReserva'
   import axios from 'axios';
 
   const url = "http://127.0.0.1:3000/"; //'http://159.65.3.243:8090/';
@@ -39,8 +32,16 @@
     name: 'Scheduler',
     data: function() {
       return {
+        //
+        insertModalVisible: false,
+        sel_start: '',
+        sel_end: '',
+        sel_resource: '',
+        sel_total: '',
         resources : [],
         events: [],
+        //
+        dp: {},
         config: {
           locale: "es-es",
           cellWidthSpec: "Fixed",
@@ -56,8 +57,15 @@
           allowEventOverlap: false,
           timeRangeSelectedHandling: "Enabled",
           onTimeRangeSelected: function (args) {
-            var dp = this;
-            DayPilot.Modal.prompt("Create a new event:", "Event 1").then(function(modal) {
+            //this.dp = this; //BORRAR, PARA PRUEBAS
+            //Cargar datos al modal
+            this.sel_start= args.start.value;
+            this.sel_end= args.end.value;
+            this.sel_resource= args.resource;
+            this.sel_total = 13000; //Hacer consulta backend previamente para cargar los precios...
+            //Abrir modal
+            this.showModal();
+            /*DayPilot.Modal.prompt("<strong>Realizar una reserva</strong>", "Event 1").then(function(modal) {
               dp.clearSelection();
               if (!modal.result) { return; }
               dp.events.add(new DayPilot.Event({
@@ -67,8 +75,8 @@
                 resource: args.resource,
                 text: modal.result
               }));
-            });
-          },
+            });*/
+          }.bind(this),
           eventMoveHandling: "Update",
           onEventMoved: function (args) {
             this.message("Event moved: " + args.e.text());
@@ -81,22 +89,30 @@
           onEventDeleted: function (args) {
             this.message("Event deleted: " + args.e.text());
           },
-          eventClickHandling: "Select",
+          eventClickHandling: "Edit",
           onEventEdited: function (args) {
             this.message("Event selected: " + args.e.text());
           },
           eventHoverHandling: "Bubble",
-          bubble: new DayPilot.Bubble({
-            onLoad: function(args) {
-              // if event object doesn't specify "bubbleHtml" property
-              // this onLoad handler will be called to provide the bubble HTML
-              args.html = "Event details";
-            }
-          }),
+          bubble: new DayPilot.Bubble(),
           contextMenu: new DayPilot.Menu({
             items: [
-              { text: "Delete", onClick: function(args) { var dp = args.source.calendar; dp.events.remove(args.source); } }
-            ]
+              {
+                text: "Cancelar reserva", onClick: function(args) {
+                var dp = args.source.calendar; dp.events.remove(args.source);
+                }
+              },
+              {
+                text: "Edit", onclick: function() {
+                  dp.events.edit(this.source);
+                }
+              },
+              {
+                text: "Ir a reserva", onclick: function( args ) {
+                  //Esto no funciona.
+                  this.$route.push("/reservas/" + args.data.codigo);
+                }
+              }]
           }),
           treeEnabled: true,
           rowHeaderWidth: 120,
@@ -104,11 +120,27 @@
           rowMinHeight: 50,
           onBeforeEventRender: function(args) {
             if(args.data.tipo === "Empresa"){
-              args.data.barColor = "red"
+              args.data.barColor = "red";
             }else if(args.data.tipo === "Particular"){
-              args.data.barColor = "blue"
+              args.data.barColor = "blue";
             }
+            args.data.bubbleHtml = "<div><b>Codigo reserva: " + args.data.codigo + "</b></div>" +
+              "<div>Tipo reserva: " + args.data.tipo + "</div>" +
+              "<div>Fecha realizado: " + args.data.fecha.split("T")[0] +"</div>" +
+              "<div>Valor: " + args.data.total + "</div>" +
+              "<br>" +
+              "<router-link :to=\"{ name: 'reservas', params: { codigo_reserva: '" + args.data.codigo + "'}}\"> Ir a reserva </router-link>";
           },
+          rowHeaderColumns : [{
+            title: 'Habitación',
+            width: 150
+          }, {
+            title: 'Tamaño',
+            width: 50
+          }, {
+            title: 'Estado',
+            width: 60
+          }]
           /*rowHeaderColumns: [
             { title: 'Habitación', width: '60'},
             { title: 'Tipo', width: '50'},
@@ -118,7 +150,8 @@
       }
     },
     components: {
-      DayPilotScheduler
+      DayPilotScheduler,
+      ModalReserva
     },
     computed: {
       // DayPilot.Scheduler object - https://api.daypilot.org/daypilot-scheduler-class/
@@ -127,6 +160,19 @@
       }
     },
     methods: {
+      nuevaReserva( reserva ){
+        reserva.id = DayPilot.guid();
+        //this.dp.events.add(new DayPilot.Event( reserva )); //ARREGLAR
+        //this.scheduler.update();
+        console.log( reserva );
+        alert('Reserva creada con éxito (Aun no la guarda)');
+      },
+      showModal() {
+        this.insertModalVisible = true;
+      },
+      closeModal() {
+        this.insertModalVisible = false;
+      },
       DateChange() {
         let inicio = document.getElementById("inicio").value;
         let fin = document.getElementById("fin").value;
@@ -178,26 +224,6 @@
           console.log("Ha ocurrido un error");
           console.log(error.toString())
         });
-        /*const resources = [
-          { name: "Piso 1", id: "F1", expanded: true, childen : [
-            { name: "101", id: "101"},
-            {name: "102", id: "102"},
-            {name: "103", id: "103"},
-            {name: "104", id: "104"},
-            {name: "105", id: "105"} ]
-          },
-          { name: "Piso 2", id: "F2", expanded: true, childen : [
-            {name: "201", id: "201"},
-            {name: "202", id: "202"},
-            {name: "203", id: "203"},
-            {name: "204", id: "204"}]
-          },
-          { name: "Piso 3", id: "F3", expanded: false, childen : [
-            {name: "301", id: "301"},
-            {name: "302", id: "302"},
-            {name: "303", id: "303"}]
-          }
-        ];*/
       },
       loadEvents(){
         var self = this;

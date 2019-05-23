@@ -7,9 +7,9 @@ import Rack from '@/components/Rack'
 Vue.use(Router)
 
 const routes = [
-  { path: '/', component: LandingPage },
-  { path: '/rack', component: Rack},
-  { path: '/reservas/*', component: InfoReserva}
+  { name: 'home', path: '/', component: LandingPage },
+  { name: 'rack', path: '/rack', component: Rack},
+  { name: 'reservas', path: '/reservas/:codigo_reserva', component: InfoReserva}
 ]
 
 export default new Router({

@@ -13,8 +13,8 @@ export default {
   data () {
     return {
       subtitle: 'Mingeso B-2 Grupo 1',
-      title: 'Iteración 0: Integración Contínua',
-      authors: ['Vicente Rivera', 'Sebastián Salazar', 'Francisco Diaz', 'Diego Salazar'],
+      title: 'Iteración 1: Rack y reserva de habitaciones',
+      authors: ['Vicente Rivera', 'Sebastián Salazar', 'Francisco Diaz'],
     }
   }
 }
