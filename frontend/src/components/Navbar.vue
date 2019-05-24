@@ -7,11 +7,16 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#items" aria-controls="items" aria-expanded="true" aria-label="Abrir navegación">
           <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="navbar-collapse collapse show" id="items">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
               <router-link to="/rack" class="nav-link">Rack</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/registros" class="nav-link">Registro de reservas</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link v-if="autenticated" class="nav-link" to="/login" v-on:click="logout">Salir</router-link>
             </li>
           </ul>
         </div>
@@ -22,7 +27,13 @@
 
 <script>
 export default {
-  name: 'Nav'
+  name: 'Nav',
+  props: [ 'autenticated'],
+  methods: {
+    logout(){
+      this.$emit('logout');
+    }
+  }
 }
 </script>
 
@@ -31,7 +42,9 @@ export default {
   width: 100%;
   position: sticky;
 }
-
+.nav-link{
+  margin-left: 30px;
+}
 #buscar{
   margin-left: 5%;
 }
