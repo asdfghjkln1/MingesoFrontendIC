@@ -19,16 +19,32 @@
       {"name": "303", "id": "303", "columns" : [{"html" : "Limpia"}, {"html" : "Simple"}]}
     ]}
   ],
+
+  "habitaciones" : [
+    { "id": 1, "number": "101", "tipo": { "id": 1, "cap": "Simple", "valor": 30000}},
+    { "id": 2, "number": "102", "tipo": { "id": 2, "cap": "Doble", "valor": 38000}},
+    { "id": 3, "number": "201", "tipo": { "id": 3, "cap": "Triple", "valor": 48000}},
+    { "id": 4, "number": "201", "tipo": { "id": 4, "cap": "Simple", "valor": 30000}}
+  ],
+
   "events" : [
-    { "id": 1, "codigo": "A", "text": "Pepe", "start": "2019-05-05T00:00:00", "end": "2019-05-07T00:00:00", "tipo": "Particular", "resource": "101", "fecha": "2019-05-07T00:00:00", "status" : "Cancelado" ,"total": 15000},
-    { "id": 2, "codigo": "B", "text": "Pepito", "start": "2019-05-04T00:00:00", "end": "2019-05-09T00:00:00", "tipo": "Empresa", "resource": "102", "fecha": "2019-05-07T00:00:00", "status" : "Check In", "total": 15000},
-    { "id": 3, "codigo": "C", "text": "Juanito", "start": "2019-04-09T00:00:00", "end": "2019-04-10T00:00:00", "tipo": "Particular",  "resource": "201", "fecha": "2019-05-07T00:00:00", "status" : "Check Out", "total": 15000},
-    { "id": 4, "codigo": "D", "text": "Pedrito", "start": "2019-06-02T00:00:00", "end": "2019-06-03T00:00:00", "tipo": "Particular",  "resource": "302", "fecha": "2019-05-07T00:00:00", "status" : "Check In", "total": 15000},
-    { "id": 5, "codigo": "A", "text": "Jorgito", "start": "2019-05-12T00:00:00", "end": "2019-05-13T00:00:00", "tipo": "Empresa", "resource": "103", "fecha": "2019-05-07T00:00:00", "status" : "Cancelado", "total": 15000}
+    { "id": 1, "codigo": "A", "text": "Pepe", "start": "2019-05-05", "end": "2019-05-07", "tipo": "Particular", "resource": 1, "fecha": "2019-05-07", "status" : "Cancelado" ,"total": 15000},
+    { "id": 2, "codigo": "B", "text": "Pepito", "start": "2019-05-04", "end": "2019-05-09", "tipo": "Empresa", "resource": 2, "fecha": "2019-05-07", "status" : "Check In", "total": 15000},
+    { "id": 3, "codigo": "C", "text": "Juanito", "start": "2019-04-09", "end": "2019-04-10", "tipo": "Particular",  "resource": 1, "fecha": "2019-05-07", "status" : "Check Out", "total": 15000},
+    { "id": 4, "codigo": "D", "text": "Pedrito", "start": "2019-06-02", "end": "2019-06-03", "tipo": "Particular",  "resource": 1, "fecha": "2019-05-07", "status" : "Check In", "total": 15000},
+    { "id": 5, "codigo": "A", "text": "Jorgito", "start": "2019-05-12", "end": "2019-05-13", "tipo": "Empresa", "resource": 2, "fecha": "2019-05-07", "status" : "Cancelado", "total": 15000}
   ],
 
   "users" : [
     { "id": 1, "username": "Vicho", "pass": "pass", "rol" : "Admin"},
-    { "id": 1, "username": "Seba", "pass": "pass2", "rol" : "Manager"}
+    { "id": 2, "username": "Seba", "pass": "pass2", "rol" : "Manager"}
+  ],
+
+  "precios" : [
+    { "id": 1, "tipo": "Simple", "precio" : 30000},
+    { "id": 2, "tipo": "Doble", "precio" : 38000},
+    { "id": 3, "tipo": "Triple", "precio" : 48000},
+    { "id": 4, "tipo": "Familiar", "precio" : 60000},
+    { "id": 5, "tipo": "Suite", "precio" : 100000}
   ]
 }

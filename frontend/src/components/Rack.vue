@@ -7,7 +7,7 @@
       </div>
       <DayPilotScheduler id="dp" :config="config" ref="scheduler" />
     </div>
-    <ModalReserva v-on:confirm="nuevaReserva" v-bind:start="sel_start" v-bind:end="sel_end" v-bind:resource="sel_resource" v-bind:total="sel_total" v-show="insertModalVisible" @close="closeModal"/>
+    <ModalReserva v-on:confirm="nuevaReserva" v-bind:selected="selectedRange" v-bind:habitaciones="habitaciones" v-show="insertModalVisible" @close="closeModal"/>
   </div>
 </template>
 
@@ -16,10 +16,22 @@
   import ModalReserva from './ModalReserva'
   import axios from 'axios';
 
-  const url = "http://127.0.0.1:3000/"; //'http://159.65.3.243:8090/';
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json'
+  };
+  const url = 'http://157.230.138.200:8090/mingesoback/';
+  const urlTest = "http://127.0.0.1:3000/";
   const axiosInst = axios.create({
     baseURL: url,
-    timeout: 10000
+    timeout: 10000,
+    headers: headers
+  });
+
+  const axiosTest = axios.create({
+    baseURL: urlTest,
+    timeout: 10000,
+    headers: headers
   });
 
   /*var fechas = $('#fechas').daterangepicker({
@@ -34,12 +46,11 @@
       return {
         //
         insertModalVisible: false,
-        sel_start: '',
-        sel_end: '',
-        sel_resource: '',
-        sel_total: '',
+        selectedRange: [],
         resources : [],
+        habitaciones: [],
         events: [],
+        precios: [],
         //
         dp: {},
         config: {
@@ -56,26 +67,13 @@
           eventMovingStartEndEnabled: true,
           allowEventOverlap: false,
           timeRangeSelectedHandling: "Enabled",
+          allowMultiRange: true,
           onTimeRangeSelected: function (args) {
-            //this.dp = this; //BORRAR, PARA PRUEBAS
+            console.log(args);
             //Cargar datos al modal
-            this.sel_start= args.start.value;
-            this.sel_end= args.end.value;
-            this.sel_resource= args.resource;
-            this.sel_total = 13000; //Hacer consulta backend previamente para cargar los precios...
+            this.selectedRange = args.multirange;
             //Abrir modal
             this.showModal();
-            /*DayPilot.Modal.prompt("<strong>Realizar una reserva</strong>", "Event 1").then(function(modal) {
-              dp.clearSelection();
-              if (!modal.result) { return; }
-              dp.events.add(new DayPilot.Event({
-                start: args.start,
-                end: args.end,
-                id: DayPilot.guid(),
-                resource: args.resource,
-                text: modal.result
-              }));
-            });*/
           }.bind(this),
           eventMoveHandling: "Update",
           onEventMoved: function (args) {
@@ -89,7 +87,7 @@
           onEventDeleted: function (args) {
             this.message("Event deleted: " + args.e.text());
           },
-          eventClickHandling: "Edit",
+          eventClickHandling: "Select",
           onEventEdited: function (args) {
             this.message("Event selected: " + args.e.text());
           },
@@ -126,26 +124,21 @@
             }
             args.data.bubbleHtml = "<div><b>Codigo reserva: " + args.data.codigo + "</b></div>" +
               "<div>Tipo reserva: " + args.data.tipo + "</div>" +
-              "<div>Fecha realizado: " + args.data.fecha.split("T")[0] +"</div>" +
+              "<div>Fecha realizado: " + args.data.fecha +"</div>" +
               "<div>Valor: " + args.data.total + "</div>" +
               "<br>" +
-              "<router-link :to=\"{ name: 'reservas', params: { codigo_reserva: '" + args.data.codigo + "'}}\"> Ir a reserva </router-link>";
+              "<a href='/reservas/"+ args.data.codigo +"'>Ir a la reserva</a>" //"<router-link :to=\"{ name: 'reservas', params: { codigo_reserva: '" + args.data.codigo + "'}}\"> Ir a reserva </router-link>";
           },
           rowHeaderColumns : [{
-            title: 'Habitación',
+            html: 'Habitación', //No funciona
             width: 150
           }, {
-            title: 'Tamaño',
+            text: 'Tamaño', //No funciona
             width: 50
           }, {
-            title: 'Estado',
+            title: 'Estado', //No funciona
             width: 60
           }]
-          /*rowHeaderColumns: [
-            { title: 'Habitación', width: '60'},
-            { title: 'Tipo', width: '50'},
-            { title: 'Estado', width : '70'}
-          ],*/
         },
       }
     },
@@ -160,12 +153,21 @@
       }
     },
     methods: {
-      nuevaReserva( reserva ){
-        reserva.id = DayPilot.guid();
-        //this.dp.events.add(new DayPilot.Event( reserva )); //ARREGLAR
-        //this.scheduler.update();
-        console.log( reserva );
-        alert('Reserva creada con éxito (Aun no la guarda)');
+      nuevaReserva( reservas ){
+        console.log( reservas );
+        for(let reserva in reservas){
+          axiosInst.post("reserva/insert", reserva).then(
+            response => {
+              if(response.status === 200) {
+                alert("Insertado con éxito");
+                this.loadEvents();
+              }
+            }).catch( error => {
+              console.log(error.toString());
+            }
+          );
+        }
+
       },
       showModal() {
         this.insertModalVisible = true;
@@ -205,16 +207,17 @@
         let days = this.config.days;
         let date_fin = date_inicio.addDays(days);
 
-        inicio.value = date_inicio.value.split("T")[0];
-        fin.value = date_fin.value.split("T")[0];
+        inicio.value = date_inicio.value;
+        fin.value = date_fin.value;
 
       },
       loadResources() {
         var self = this;
-        axiosInst.get(url + 'resources').then(
+        axiosInst.get('habitaciones').then(
           response => {
             if(response.status === 200){
-              self.resources = response.data;
+              self.habitaciones = response.data;
+              this.parseRooms(response.data);
               this.scheduler.update({resources : self.resources});
             }
             else{
@@ -225,9 +228,25 @@
           console.log(error.toString())
         });
       },
+      parseRooms( habitaciones ) {
+        let resources = [];
+        //let pisos = [];
+        for(let i = 0; i < habitaciones.length; i++){
+          let resource = {
+            id: habitaciones[i].id,
+            name: habitaciones[i].number,
+            valor: habitaciones[i].tipo.valor,
+            columns: [{
+              html: habitaciones[i].tipo.cap
+            }]
+          };
+          resources.push(resource);
+        }
+        this.resources = resources;
+      },
       loadEvents(){
         var self = this;
-        axiosInst.get(url + 'events').then(
+        axiosInst.get('reservas').then(
           response => {
             if(response.status === 200){
               self.events = response.data;
@@ -240,12 +259,28 @@
           console.log("Ha ocurrido un error en loadEvents");
           console.log(error.toString())
         });
+      },
+      loadPrecios(){
+        var self = this;
+        axiosTest.get('precios').then(
+          response => {
+            if(response.status === 200){
+              self.precios = response.data;
+            }
+            else{
+              console.log("ERROR STATUS != 200");
+            }
+          }).catch(error => {
+          console.log("Ha ocurrido un error en loadPrecios");
+          console.log(error.toString())
+        });
       }
     },
     mounted: function() {
       this.loadResources();
       this.loadEvents();
       this.loadInitialRange();
+      this.loadPrecios();
     }
   }
 </script>

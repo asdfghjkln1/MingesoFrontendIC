@@ -73,7 +73,7 @@
     padding: 30px;
   }
   .form-control{
-    width: 400px;
-    margin: auto;
+    margin-left: auto;
+    padding: 10px 70px 10px 70px;
   }
 </style>

@@ -4,8 +4,13 @@
     <div class="modal-backdrop-custom">
       <div class="modal-custom" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
         <div class="modal-header-custom" id="modalTitle">
-          <div name="header">
-            <h3> Nueva Reserva <span><button type="button" class="btn-close" @click="close" aria-label="Close modal"> x </button></span> </h3>
+          <div style="width: 100%;" name="header">
+            <div id="header-title">
+              <h3 > Nueva Reserva </h3>
+            </div>
+            <div style="float: right">
+              <button type="button" class="btn-close" @click="close" aria-label="Close modal"> x </button>
+            </div>
           </div>
         </div>
         <section class="modal-body-custom" id="modalDescription">
@@ -15,14 +20,21 @@
               <input class="form-control" v-model="name" id="name">
               <label>Tipo de reserva (Particular, Empresa)</label>
               <input class="form-control" v-model="tipo" id="tipo">
-              <label>Fecha inicio</label>
-              <input class="form-control" v-model="start" disabled>
-              <label>Fecha fin</label>
-              <input class="form-control" v-model="end" disabled>
-              <label>Valor de la reserva (modificable para administrador)</label>
-              <input class="form-control" v-model="total" disabled>
+              <div class="row">
+                <div v-for="(selection, index) in selected" v-bind:key="index" class="col">
+                  <label>Fecha inicio</label>
+                  <input class="form-control" v-model="selection.start" disabled>
+                  <label>Fecha fin</label>
+                  <input class="form-control" v-model="selection.end" disabled>
+                  <label>* {{ dias[index] }} dia(s)/noche(s)</label><br/>
+                  <label> Valor unitario </label>
+                  <input name="precio" class="form-control" v-once v-bind:value="preciosPorDia[index]" v-on:change="updatePrecio">
+                  <label>Valor de la reserva</label>
+                  <input name="subtotal" class="form-control" v-bind:value="subtotales[index]" disabled>
+                </div>
+              </div>
             </div>
-            <br>
+            <h5> Precio total: $<span id="total">{{ setPrecios }}</span></h5>
           </div>
         </section>
         <footer class="modal-footer-custom">
@@ -40,11 +52,15 @@
 <script>
   export default {
     name: 'ModalReserva',
-    props: [ 'start' , 'end' , 'resource', 'total' ],
+    props: [ 'selected', 'habitaciones' ], //Array de rangos de fecha
     data: function (){
       return {
         name: '',
-        tipo: ''
+        tipo: '',
+        preciosPorDia: [],
+        subtotales: [],
+        total: 0,
+        dias: []
       }
     },
     methods: {
@@ -53,24 +69,60 @@
           return false;
         }
         let codigo_reserva = "ABC"; //hay que autogenerar un codigo
-        let reserva = {
-          id: '',
-          codigo: codigo_reserva,
-          start: this.start,
-          end: this.end,
-          tipo: this.tipo,
-          text: this.name,
-          resource: this.resource,
-          fecha: Date.now(),
-          total: this.total
-        };
-        this.$emit('confirm', reserva);
+        let reservas = [];
+        for(let i = 0; i < this.selected.length; i++){
+          let reserva = {
+            codigo: codigo_reserva,
+            nombre: this.name,
+            inicio: this.selected[i].start.value,
+            fin: this.selected[i].end.value,
+            //tipo: selected[i].tipo,
+            habitacion_id: this.selected[i].resource,
+            fecha_reserva: new Date().toJSON().slice(0,10),
+            valor: this.subtotales[i]
+          };
+          reservas.push(reserva);
+        }
+        this.$emit('confirm', reservas);
+      },
+      lookupPrecio(room_id){
+        for(let i = 0; i < this.habitaciones.length; i++){
+          if(this.habitaciones[i].id === room_id){
+            return this.habitaciones[i].tipo.valor;
+          }
+        }
+      },
+      updatePrecio(){
+        let precios = document.getElementsByName("precio");
+        this.subtotales = [];
+        let total = 0;
+        for(let i = 0; i < precios.length; i++){
+          let subtotal = parseInt(precios[i].value) * this.dias[i];
+          this.subtotales.push(subtotal);
+          total += subtotal;
+        }
+        document.getElementById("total").innerHTML = total.toString();
       },
       close() {
         this.$emit('close');
       },
     },
-  };
+    computed: {
+      setPrecios(){
+        let total = 0;
+        for(let i = 0; i < this.selected.length; i++){
+          let precio = this.lookupPrecio(this.selected[i].resource);
+          const diff = Math.abs(Date.parse(this.selected[i].end) - Date.parse(this.selected[i].start));
+          const dias = Math.ceil(diff / (1000 * 3600 * 24));
+          this.dias.push(dias);
+          this.preciosPorDia.push(precio);
+          this.subtotales.push(precio*dias);
+          total += this.subtotales[i];
+        }
+        return total;
+      },
+    }
+  }
 </script>
 
 <style>
@@ -117,21 +169,37 @@
     padding: 20px 20px 0px 20px;
   }
 
+  #header-title{
+    float: left;
+    padding: 20px 0px 10px 30px;
+  }
+
   .btn-close {
     border: none;
     font-size: 20px;
-    padding: 20px;
+    padding: 10px;
+    float: right;
     cursor: pointer;
     font-weight: bold;
     color: #4AAE9B;
     background: transparent;
-    margin: 0px 0px 10px 50px;
+    margin: 10px;
   }
 
   .btn-green {
     color: white;
+    width: 100px;
     background: #4AAE9B;
     border: 1px solid #4AAE9B;
     border-radius: 2px;
+    cursor: pointer;
+  }
+  .btn-red {
+    color: white;
+    width: 100px;
+    background: #af3638;
+    border: 1px solid #2d2b2d;
+    border-radius: 2px;
+    cursor: pointer;
   }
 </style>
