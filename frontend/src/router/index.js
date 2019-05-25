@@ -4,6 +4,7 @@ import LandingPage from '@/components/LandingPage'
 import InfoReserva from '@/components/InfoReserva'
 import Rack from '@/components/Rack'
 import RegistroReservas from '@/components/RegistroReservas'
+import Habitaciones from '@/components/Habitaciones'
 import Login from '@/components/Login'
 
 Vue.use(Router);
@@ -13,6 +14,7 @@ const routes = [
   { name: 'rack', path: '/rack', component: Rack},
   { name: 'reservas', path: '/reservas/:codigo_reserva', component: InfoReserva},
   { name: 'registros', path: '/registros', component: RegistroReservas},
+  { name: 'habitaciones', path: '/habitaciones', component: Habitaciones},
   { name: 'login', path: '/login', component: Login}
 ];
 

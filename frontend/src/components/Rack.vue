@@ -20,7 +20,7 @@
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json'
   };
-  const url = 'http://157.230.138.200:8090/mingesoback/';
+  const url = 'http://localhost:8090/mingesoback/';
   const urlTest = "http://127.0.0.1:3000/";
   const axiosInst = axios.create({
     baseURL: url,
@@ -246,6 +246,7 @@
       },
       loadEvents(){
         var self = this;
+        console.log(123);
         axiosInst.get('reservas').then(
           response => {
             if(response.status === 200){
@@ -262,7 +263,7 @@
       },
       loadPrecios(){
         var self = this;
-        axiosTest.get('precios').then(
+        axiosInst.get('precios').then(
           response => {
             if(response.status === 200){
               self.precios = response.data;
