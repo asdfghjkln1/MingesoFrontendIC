@@ -1,7 +1,7 @@
 <template>
     <div id="habitaciones-edit" class="habitaciones-container">
         <div class="row">
-            <table class="table table-striped table-dark">
+            <table class="table table-striped">
                 <tr>
                     <th><h1 class="titulo">Editor de habitaciones</h1></th>
                 </tr>
@@ -17,11 +17,26 @@
                         <td colspan="1"> {{habitacion.id}} </td>
                         <td colspan="1">{{habitacion.number}}</td>
                         <td colspan="1">{{habitacion.tipo.tipo}} </td>
-                        <td colspan="1"> <b-button variant="outline-primary">Editar</b-button></td>
+                        <td><b-button variant="outline-primary" v-b-modal.modal-edit-habitacion @click="showModal(habitacion)">Editar</b-button></td>
                     </tr>
                 </tbody>
             </table>
         </div>
+        <b-modal id="modal-edit-habitacion"
+            ref="modal"
+            :title="'Editar habitacion: ' +this.habitacionAux.number"
+            @show="resetModal"
+            @hidden="resetModal"
+            @ok="handleOk"
+            >
+            <form ref="form" @submit.stop.prevent="handleSubmit">
+                <b-form-group
+                    label="Tipo"
+                    >
+                    <b-form-select v-model="tipo" :options="opciones"></b-form-select>
+                </b-form-group>
+            </form>
+        </b-modal>
     </div>
 </template>
 
@@ -43,10 +58,14 @@ export default {
     data() {
         return {
             habitaciones: [],
+            tipo: null,
+            habitacionAux: '',
+            opciones: [],
         }
     },
     created() {
         this.getHabitaciones();
+        this.getTipo();
     },
     methods: {
         getHabitaciones() {
@@ -63,7 +82,56 @@ export default {
                 }
             ).catch(error => {
                 console.log("Ha ocurrido un error");
-                console.log(error.toString())
+                console.log(error.toString());
+            })
+        },
+        getTipo(){
+            axiosInst.get(url + '/tipos').then(
+                response => {
+                    if(response.status = 200){
+                        console.log("Tipos obtenidos");
+                        this.opciones=response.data.map(tipo => ({value: tipo, text: tipo.tipo}));
+                    }
+                    else{
+                        console.log("ERROR STATUS != 200");
+                    }
+                }
+            ).catch(error => {
+                console.log("Ha ocurrido un error");
+                console.log(error.toString());
+            })
+        },
+        showModal(habitacion){
+            console.log("It's work!!!");
+            this.habitacionAux = habitacion;
+
+        },
+        checkFormValidity() {
+            const valid = this.$refs.form.checkValidity()
+            this.nameState = valid ? 'valid' : 'invalid'
+            return valid
+        },
+        resetModal() {
+            this.tipo = ''
+            this.tipoState = null
+        },
+        handleOk(bvModalEvt) {
+            // Prevent modal from closing
+            console.log(this.tipo);
+            console.log(this.opciones);
+            axiosInst.put(url+'/habitacion/'+this.habitacionAux.id, this.tipo)
+            bvModalEvt.preventDefault()
+            // Trigger submit handler
+            this.handleSubmit()
+        },
+        handleSubmit() {
+            // Exit when the form isn't valid
+            if (!this.checkFormValidity()) {
+                //agregar el post
+                return
+            }
+            this.$nextTick(() => {
+                this.$refs.modal.hide()
             })
         }
     }
