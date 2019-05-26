@@ -61,6 +61,7 @@ export default {
             tipo: null,
             habitacionAux: '',
             opciones: [],
+            habitacionNueva: '',
         }
     },
     created() {
@@ -119,7 +120,15 @@ export default {
             // Prevent modal from closing
             console.log(this.tipo);
             console.log(this.opciones);
-            axiosInst.put(url+'/habitacion/'+this.habitacionAux.id, this.tipo)
+            axiosInst.put(url+'/habitacion/'+this.habitacionAux.id, this.tipo).then(
+                response => {
+                    console.log(response);
+                    if(response.status = 200){
+                        console.log("Habitacion actualizada");
+                        this.getHabitaciones();
+                    }
+                }
+            )
             bvModalEvt.preventDefault()
             // Trigger submit handler
             this.handleSubmit()

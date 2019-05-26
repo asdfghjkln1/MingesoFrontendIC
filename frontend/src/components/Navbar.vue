@@ -16,7 +16,7 @@
               <router-link to="/registros" class="nav-link">Registro de reservas</router-link>
             </li>
             <li class="nav-item">
-              <router-link v-if="autenticated" class="nav-link" to="/habitaciones" v-on:click="logout">Habitaciones</router-link>
+              <router-link  class="nav-link" to="/habitaciones">Habitaciones</router-link>
             </li>
             <li v-if="!auth" class="nav-item"> <!-- No puedo actualizarlo -->
               <p class="nav-link">Logeado como {{ user }} - {{ rol }}</p>

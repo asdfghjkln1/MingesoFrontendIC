@@ -15,7 +15,7 @@ const router = new Router({
       { name: 'rack', path: '/rack', component: Rack, meta: { requiresAuth: true}},
       { name: 'reservas', path: '/reservas/:codigo_reserva', component: InfoReserva, meta: { requiresAuth: true}},
       { name: 'registros', path: '/registros', component: RegistroReservas, meta: { requiresAuth: true}},
-      { name: 'habitaciones', path: '/habitaciones', component: Habitaciones, meta: {requiresAuth: false}},
+      { name: 'habitaciones', path: '/habitaciones', component: Habitaciones},
       { name: 'login', path: '/login', component: Login}
       ]
 });
