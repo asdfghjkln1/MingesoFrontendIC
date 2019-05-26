@@ -15,8 +15,11 @@
             <li class="nav-item">
               <router-link to="/registros" class="nav-link">Registro de reservas</router-link>
             </li>
-            <li class="nav-item">
-              <router-link v-if="autenticated" class="nav-link" to="/login" v-on:click="logout">Salir</router-link>
+            <li v-if="!auth" class="nav-item"> <!-- No puedo actualizarlo -->
+              <p class="nav-link">Logeado como {{ user }} - {{ rol }}</p>
+            </li>
+            <li v-if="auth" class="nav-item">
+              <div class="nav-link" v-on:click="logout">Salir</div>
             </li>
           </ul>
         </div>
@@ -28,12 +31,36 @@
 <script>
 export default {
   name: 'Nav',
-  props: [ 'autenticated'],
+  props: [ 'authenticated' ],
+  data: function() {
+    return {
+      user: '',
+      rol: '',
+      auth: false,
+    }
+  },
   methods: {
     logout(){
+      console.log("Logging out...");
+      localStorage.clear();
+      this.$router.replace({name: "login"});
       this.$emit('logout');
+    },
+  },
+  mounted: function() {
+      let user = localStorage.getItem('usuario');
+      if(user){
+        this.auth = true;
+        user = JSON.parse(user);
+        this.user = user.user;
+        this.rol = user.rol;
+      }
+  },
+  /*watch: {
+    user(newUser) {
+      console.log(newUser);
     }
-  }
+  }*/
 }
 </script>
 

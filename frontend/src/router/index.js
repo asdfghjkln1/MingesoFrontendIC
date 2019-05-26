@@ -8,14 +8,31 @@ import Login from '@/components/Login'
 
 Vue.use(Router);
 
-const routes = [
-  { name: 'home', path: '/', component: LandingPage },
-  { name: 'rack', path: '/rack', component: Rack},
-  { name: 'reservas', path: '/reservas/:codigo_reserva', component: InfoReserva},
-  { name: 'registros', path: '/registros', component: RegistroReservas},
-  { name: 'login', path: '/login', component: Login}
-];
-
-export default new Router({
-  routes
+const router = new Router({
+    routes : [
+      { name: 'home', path: '/', component: LandingPage , meta: { requiresAuth: true}},
+      { name: 'rack', path: '/rack', component: Rack, meta: { requiresAuth: true}},
+      { name: 'reservas', path: '/reservas/:codigo_reserva', component: InfoReserva, meta: { requiresAuth: true}},
+      { name: 'registros', path: '/registros', component: RegistroReservas, meta: { requiresAuth: true}},
+      { name: 'login', path: '/login', component: Login}
+      ]
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!localStorage.getItem('usuario')) {
+      next({
+        path: '/login',
+        query: {
+          redirect: to.fullPath,
+        },
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+export default router;

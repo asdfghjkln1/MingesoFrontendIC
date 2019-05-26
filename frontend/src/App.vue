@@ -1,11 +1,8 @@
 <template>
   <div id="app">
-    <head>
-      <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">-->
-    </head>
-    <Navbar autenticated="autenticated" @logout="logout"></Navbar>
+    <Navbar v-bind:authenticated="authenticated" v-bind:parent="this" @logout="logout"></Navbar>
     <div id="main-container">
-      <router-view @autenticated="setAuthenticated"/>
+      <router-view @autenticated="setAuthenticated"></router-view>
       <footer>
         <p>Creador por {{subtitle}}:</p><br>
         <ul v-for="author in authors">
@@ -33,8 +30,8 @@ export default {
     }
   },
   methods: {
-    setAuthenticated(status) {
-      this.authenticated = status;
+    setAuthenticated() {
+      this.authenticated = true;
     },
 
     logout() {

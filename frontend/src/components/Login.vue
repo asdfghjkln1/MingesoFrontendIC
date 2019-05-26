@@ -1,5 +1,5 @@
 <template>
-  <div id="Login">
+  <div id="Login" class="col-md-4 col-sm-6">
     <h1> Registro </h1>
     <form>
       <div class="form-group">
@@ -18,7 +18,7 @@
 
 <script>
   import axios from 'axios';
-  const url = 'http://localhost:3000';
+  const url = 'http://localhost:3000/';
   //const url = 'http://159.65.3.243:8090';
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -44,17 +44,22 @@
           alert("Debe ingresar credenciales válidas");
           return false;
         }
-        axiosInst.get('/users').then(
+        axiosInst.get('users').then(
           response => {
           if(response.status === 200){
-            for(let user in response.status){
-              console.log(user);
-              if(user.username === this.username && user.pass === this.password){
-                this.$emit("authenticated", true);
+            for(let i = 0; i < response.data.length; i++){
+              if(response.data[i].username === this.username && response.data[i].pass === this.password){
+                let user = {
+                  nombre: response.data[i].username,
+                  rol: response.data[i].rol
+                };
+                localStorage.setItem('usuario', JSON.stringify(user));
+                this.$emit("authenticated");
                 this.$router.replace({name: "home"});
+                return true;
               }
             }
-            console.log("The username and / or password is incorrect");
+            alert("El usuario y/o la contraseña son incorrectos");
             return false;
           } else if(response.status !== 200){
             console.log("ERROR INTERNO");
@@ -71,6 +76,8 @@
 <style scoped>
   #Login {
     padding: 30px;
+    float: none;
+    margin: 0 auto;
   }
   .form-control{
     margin-left: auto;
