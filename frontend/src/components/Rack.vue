@@ -1,19 +1,44 @@
 <template>
   <div id="Scheduler">
-    <div class="scheduler-container">
+    <div class="component-container">
       <div id="fechas" class="date-container">
         <input type="date" id="inicio" v-on:change="DateChange">
         <input type="date" id="fin" v-on:change="DateChange">
       </div>
-      <DayPilotScheduler id="dp" :config="config" ref="scheduler" />
+      <div class="scheduler-container row">
+        <div class="col-lg-10 col-md-12">
+        <DayPilotScheduler id="dp" :config="config" ref="scheduler" />
+        </div>
+      </div>
+      <!--
+      <form v-if="checkAdmin" class="row">
+        <h6> Nueva habitación</h6>
+        <br>
+        <div class="form-group">
+          <label for="num_habitacion">Identificación de la habitación</label>
+          <input class="form-control" id="num_habitacion" placeholder="Ej. 103, A305, etc" v-model="num_hab">
+        </div>
+        <div class="form-group">
+          <label for="tipo_habitacion">Tipo habitación</label>
+          <input class="form-control" id="tipo_habitacion" placeholder="Ej. Simple, Doble, etc" v-model="tipo_hab">
+        </div>
+        <button role="button" type="submit" id="btn_nueva_hab"> Confirmar </button>
+      </form>
+      -->
+      <div class="row">
+        <div class="col-lg-8 col-md-10">
+          <TablaPrecios :precios="precios" v-on:editarTipo="editTipo" v-on:eliminarTipo="deleteTipo" v-on:nuevoTipo="newTipo"></TablaPrecios>
+        </div>
+      </div>
     </div>
     <ModalReserva v-on:confirm="nuevaReserva" v-bind:selected="selectedRange" v-bind:habitaciones="habitaciones" v-show="insertModalVisible" @close="closeModal"/>
   </div>
 </template>
 
 <script>
-  import {DayPilot, DayPilotScheduler} from 'daypilot-pro-vue'
-  import ModalReserva from './ModalReserva'
+  import {DayPilot, DayPilotScheduler} from 'daypilot-pro-vue';
+  import ModalReserva from './ModalReserva';
+  import TablaPrecios from './PriceTable';
   import axios from 'axios';
 
   const headers = {
@@ -42,6 +67,7 @@
 
   export default {
     name: 'Scheduler',
+    props: [ "rol" ],
     data: function() {
       return {
         //
@@ -51,8 +77,10 @@
         habitaciones: [],
         events: [],
         precios: [],
-        //
-        dp: {},
+        // Para nueva habitacion
+        tipo_hab: '',
+        num_hab: '',
+        // Daypilot
         config: {
           locale: "es-es",
           cellWidthSpec: "Fixed",
@@ -144,12 +172,19 @@
     },
     components: {
       DayPilotScheduler,
-      ModalReserva
+      ModalReserva,
+      TablaPrecios
     },
     computed: {
       // DayPilot.Scheduler object - https://api.daypilot.org/daypilot-scheduler-class/
       scheduler: function () {
         return this.$refs.scheduler.control;
+      },
+      checkAdmin(){
+        let user = localStorage.getItem('usuario');
+        if(user){
+          return JSON.parse(user).rol === 'Admin';
+        } else return false;
       }
     },
     methods: {
@@ -168,6 +203,31 @@
           );
         }
 
+      },
+      editTipo(){
+        alert("No implementado.");
+      },
+      newTipo( tipo ){
+        axiosTest.post("/tipo/"+tipo.tipo+"/"+tipo.precio).then(
+          response => {
+            if(response.status === 200){
+              alert("Agregado con éxito");
+            }
+          }
+        ).catch( error => {
+          console.log(error.toString());
+        });
+      },
+      deleteTipo( index ){
+        axiosTest.post("/tipo/"+index).then(
+          response => {
+            if(response.status === 200){
+              alert("Eliminado con éxito");
+            }
+          }
+        ).catch( error => {
+          console.log(error.toString());
+        });
       },
       showModal() {
         this.insertModalVisible = true;
@@ -207,13 +267,13 @@
         let days = this.config.days;
         let date_fin = date_inicio.addDays(days);
 
-        inicio.value = date_inicio.value;
-        fin.value = date_fin.value;
+        inicio.value = date_inicio.value.split("T")[0];
+        fin.value = date_fin.value.split("T")[0];
 
       },
       loadResources() {
         var self = this;
-        axiosInst.get('habitaciones').then(
+        axiosTest.get('habitaciones').then(
           response => {
             if(response.status === 200){
               self.habitaciones = response.data;
@@ -246,8 +306,7 @@
       },
       loadEvents(){
         var self = this;
-        console.log(123);
-        axiosInst.get('reservas').then(
+        axiosTest.get('events').then(
           response => {
             if(response.status === 200){
               self.events = response.data;
@@ -287,9 +346,12 @@
 </script>
 
 <style scoped>
-  .scheduler-container{
+  .component-container{
     padding: 30px 10px 30px 10px;
     margin-top: 20px;
     align-content: center;
+  }
+  .scheduler-container{
+    margin: 20px;
   }
 </style>
