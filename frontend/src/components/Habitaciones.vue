@@ -4,23 +4,23 @@
             <table class="table table-striped">
                 <tr>
                     <th><h1 class="titulo">Editor de habitaciones</h1></th>
-                    <b-button variant="outline-primary" style="margin: 12% -470% 0 0;" v-b-modal.modal-new-habitacion>Agregar</b-button>
+                    <b-button variant="outline-primary" style="margin: 12% -470% 0 0;" v-b-modal.modal-new-habitacion v-if="this.rol === 'administrador'">Agregar</b-button>
                 </tr>
                 <tbody>
                     <tr>
                         <td colspan="1"> Id de habitación </td>
                         <td colspan="1"> Numero</td>
                         <td colspan="1"> Tipo </td>
-                        <td colspan="1"> </td>
-                        <td colspan="1"> </td>
+                        <td colspan="1" v-if="this.rol === 'administrador'"> </td>
+                        <td colspan="1" v-if="this.rol === 'administrador'"> </td>
                     </tr>
                     <tr v-for="habitacion in habitaciones">
                         
                         <td colspan="1"> {{habitacion.id}} </td>
                         <td colspan="1">{{habitacion.number}}</td>
                         <td colspan="1">{{habitacion.tipo.tipo}} </td>
-                        <td><b-button variant="outline-primary" v-b-modal.modal-edit-habitacion @click="showModal(habitacion)">Editar</b-button></td>
-                        <td><b-button variant="outline-danger" @click="deleteHabitacion(habitacion)">Eliminar</b-button></td>
+                        <td v-if="rol === 'administrador'"><b-button variant="outline-primary" v-b-modal.modal-edit-habitacion @click="showModal(habitacion)">Editar</b-button></td>
+                        <td v-if="rol === 'administrador'"><b-button variant="outline-danger" @click="deleteHabitacion(habitacion)">Eliminar</b-button></td>
                     </tr>
                 </tbody>
             </table>
@@ -72,8 +72,8 @@
 
 <script>
     import axios from 'axios';
-    const url = "http://localhost:8090/mingesoback";
-    //const url = 'http://157.230.138.200:8090/mingesoback';
+    //const url = "http://localhost:8090/mingesoback";
+    const url = 'http://157.230.138.200:8090/mingesoback';
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
@@ -88,6 +88,7 @@ export default {
     name: 'Habitaciones',
     data() {
         return {
+            rol: null,
             habitaciones: [],
             tipo: null,
             habitacionAux: '',
@@ -100,9 +101,11 @@ export default {
     created() {
         this.getHabitaciones();
         this.getTipo();
+        this.rol = JSON.parse(localStorage.usuario).rol;
     },
     methods: {
         getHabitaciones() {
+            console.log(localStorage.usuario);
             axiosInst.get(url + '/habitaciones').then(
                 response => {
                     if(response.status = 200){
