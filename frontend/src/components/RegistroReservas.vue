@@ -31,13 +31,13 @@
           <tr v-for="reserva in reservas">
             <td>{{reserva.id}}</td>
             <td>{{reserva.codigo}}</td>
-            <td>{{reserva.text}}</td> <!--Cambiar por reserva.nombre-->
-            <td>{{reserva.start}}</td> <!--Cambiar por reserva.inicio/fin-->
-            <td>{{reserva.end}}</td>
+            <td>{{reserva.nombre}}</td> <!--Cambiar por reserva.nombre-->
+            <td>{{reserva.inicio.substring(0, 10)}}</td> <!--Cambiar por reserva.inicio/fin-->
+            <td>{{reserva.fin.substring(0, 10)}}</td>
             <td>{{reserva.tipo}}</td>
-            <td>{{reserva.fecha}}</td>
+            <td>{{reserva.fecha_reserva.substring(0, 10)}}</td>
             <td class="status">{{reserva.status}}</td>
-            <td>{{reserva.total}}</td>
+            <td>{{reserva.final_descuento}}</td>
           </tr>
           </tbody>
         </table>
@@ -56,12 +56,6 @@
   };
   const axiosInst = axios.create({
     baseURL: url,
-    timeout: 10000,
-    headers: headers
-  });
-
-  const axiosTest = axios.create({
-    baseURL: urlTest,
     timeout: 10000,
     headers: headers
   });
@@ -109,23 +103,22 @@
       },
       filtroCodigo(){
         console.log("Filtrando por codigo: "+this.filtro_codigo);
-        axiosTest.get("/reservas/codigo/"+this.filtro_codigo).then(
+        axiosInst.get("/reservas/codigo/"+this.filtro_codigo).then(
           response => {
             if(response.status === 200){
-              self.events = response.data;
-              this.scheduler.update({events : self.events});
+              this.reservas = response.data;
             }
           }).catch( error => {
           console.log(error.toString());
         });
       },
       filtroNombre(){
-        console.log("Filtrando por nombre: "+this.filtro_nombre);
-        axiosTest.get("/reservas/nombre/"+this.filtro_nombre).then(
+        console.log("Filtrando por nombre: " + this.filtro_nombre);
+        axiosInst.get("/reservas/nombre/"+this.filtro_nombre).then(
           response => {
             if(response.status === 200){
-              self.events = response.data;
-              this.scheduler.update({events : self.events});
+              this.reservas = response.data;
+              
             }
           }).catch( error => {
           console.log(error.toString());

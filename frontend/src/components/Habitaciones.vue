@@ -4,12 +4,14 @@
             <table class="table table-striped">
                 <tr>
                     <th><h1 class="titulo">Editor de habitaciones</h1></th>
+                    <b-button variant="outline-primary" style="margin: 12% -470% 0 0;" v-b-modal.modal-new-habitacion>Agregar</b-button>
                 </tr>
                 <tbody>
                     <tr>
                         <td colspan="1"> Id de habitación </td>
                         <td colspan="1"> Numero</td>
                         <td colspan="1"> Tipo </td>
+                        <td colspan="1"> </td>
                         <td colspan="1"> </td>
                     </tr>
                     <tr v-for="habitacion in habitaciones">
@@ -18,6 +20,7 @@
                         <td colspan="1">{{habitacion.number}}</td>
                         <td colspan="1">{{habitacion.tipo.tipo}} </td>
                         <td><b-button variant="outline-primary" v-b-modal.modal-edit-habitacion @click="showModal(habitacion)">Editar</b-button></td>
+                        <td><b-button variant="outline-danger" @click="deleteHabitacion(habitacion)">Eliminar</b-button></td>
                     </tr>
                 </tbody>
             </table>
@@ -37,13 +40,40 @@
                 </b-form-group>
             </form>
         </b-modal>
+        <b-modal id="modal-new-habitacion"
+            ref="new"
+            :title="'Crear habitacion'"
+            @show="resetModal"
+            @hidden="resetModal"
+            @ok="newHabitacion"
+            >
+            <form ref="form" @submit.stop.prevent="handleSubmit">
+                <b-form-group label="Número Habitación">
+                    <b-form-input
+                      id="number"
+                      type="text"
+                      v-model="newNumber"
+                      required
+                      placeholder="Ej: 250"
+                    ></b-form-input>
+                </b-form-group>
+                <b-form-group label="Tipo Habitación">
+                    <b-form-select
+                      id="tipo"
+                      v-model="newTipo"
+                      :options="opciones"
+                      required
+                    ></b-form-select>
+                </b-form-group>
+            </form>
+        </b-modal>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
-    //const url = "http://localhost:8090/mingesoback";
-    const url = 'http://157.230.138.200:8090/mingesoback';
+    const url = "http://localhost:8090/mingesoback";
+    //const url = 'http://157.230.138.200:8090/mingesoback';
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
@@ -63,6 +93,8 @@ export default {
             habitacionAux: '',
             opciones: [],
             habitacionNueva: '',
+            newTipo: null,
+            newNumber: null
         }
     },
     created() {
@@ -143,6 +175,15 @@ export default {
             this.$nextTick(() => {
                 this.$refs.modal.hide()
             })
+        },
+        newHabitacion: async function(bvModalEvt){
+            await axiosInst.post(url + "/habitacion/" + this.newNumber + "/" + this.newTipo.id);
+            await this.getHabitaciones();
+            this.$refs.modal.hide();
+        },
+        deleteHabitacion: async function(habitacion){
+            await axiosInst.post(url + "/habitacion/" + habitacion.id);
+            this.getHabitaciones();
         }
     }
 }
