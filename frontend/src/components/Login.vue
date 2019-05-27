@@ -18,8 +18,8 @@
 
 <script>
   import axios from 'axios';
-  const url = 'http://localhost:3000/';
-  //const url = 'http://159.65.3.243:8090';
+  //const url = 'http://localhost:8090/mingesoback';
+  const url = 'http://157.230.138.200:8090/mingesoback';
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json'
@@ -44,11 +44,11 @@
           alert("Debe ingresar credenciales válidas");
           return false;
         }
-        axiosInst.get('users').then(
+        axiosInst.get('usuarios').then(
           response => {
           if(response.status === 200){
             for(let i = 0; i < response.data.length; i++){
-              if(response.data[i].username === this.username && response.data[i].pass === this.password){
+              if(response.data[i].usuario === this.username && response.data[i].password === this.password){
                 let user = {
                   nombre: response.data[i].username,
                   rol: response.data[i].rol

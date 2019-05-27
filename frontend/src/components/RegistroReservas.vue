@@ -38,8 +38,8 @@
 
 <script>
   import axios from 'axios';
-  const url = 'http://localhost:3000';
-  //const url = 'http://159.65.3.243:8090';
+  //const url = 'http://localhost:3000';
+  const url = 'http://157.230.138.200:8090/mingesoback';
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json'
@@ -64,7 +64,7 @@
     },
     methods: {
       fetchReservas(){
-        axiosInst.get('events').then(
+        axiosInst.get('reservas').then(
           response => {
             if(response.status === 200){
               this.reservas = response.data; //._embedded.reservas;
