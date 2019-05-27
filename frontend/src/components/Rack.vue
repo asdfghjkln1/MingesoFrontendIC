@@ -1,12 +1,27 @@
 <template>
   <div id="Scheduler">
     <div class="component-container">
-      <div id="fechas" class="date-container">
-        <input type="date" id="inicio" v-on:change="DateChange">
-        <input type="date" id="fin" v-on:change="DateChange">
+      <h2 id="rack-title">Rack de reservas</h2>
+      <div class="row">
+        <div class=" offset-lg-1 offset-md-2 form-group col-lg-2 col-md-4">
+          <label for="inicio">Inicio Rack</label>
+          <input class="form-control" type="date" id="inicio" v-on:change="DateChange">
+        </div>
+        <div class="form-group col-lg-2 col-md-4">
+          <label for="inicio">Fin Rack</label>
+          <input class="form-control" type="date" id="fin" v-on:change="DateChange">
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <label for="filtro1">Filtro por código</label>
+          <input id="filtro1" class="form-control" v-model="filtro_codigo" placeholder="Ingresar código de la reserva..." v-on:change="filtroCodigo">
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <label for="filtro2">Filtro por nombre</label>
+          <input id="filtro2" class="form-control" v-model="filtro_nombre" placeholder="Ingresar nombre del representante..." v-on:change="filtroNombre">
+        </div>
       </div>
       <div class="scheduler-container row">
-        <div class="col-lg-10 col-md-12">
+        <div class="col-lg-12 col-md-12">
         <DayPilotScheduler id="dp" :config="config" ref="scheduler" />
         </div>
       </div>
@@ -80,6 +95,9 @@
         // Para nueva habitacion
         tipo_hab: '',
         num_hab: '',
+        //Para filtros
+        filtro_codigo: '',
+        filtro_nombre: '',
         // Daypilot
         config: {
           locale: "es-es",
@@ -203,6 +221,30 @@
           );
         }
 
+      },
+      filtroCodigo(){
+        console.log("Filtrando por codigo: "+this.filtro_codigo);
+        axiosTest.get("/reservas/codigo/"+this.filtro_codigo).then(
+          response => {
+            if(response.status === 200){
+              self.events = response.data;
+              this.scheduler.update({events : self.events});
+            }
+        }).catch( error => {
+          console.log(error.toString());
+        });
+      },
+      filtroNombre(){
+        console.log("Filtrando por nombre: "+this.filtro_nombre);
+        axiosTest.get("/reservas/nombre/"+this.filtro_nombre).then(
+          response => {
+            if(response.status === 200){
+              self.events = response.data;
+              this.scheduler.update({events : self.events});
+            }
+          }).catch( error => {
+          console.log(error.toString());
+        });
       },
       editTipo(){
         alert("No implementado.");
@@ -346,6 +388,10 @@
 </script>
 
 <style scoped>
+  #rack-title{
+    padding: 10px;
+    margin-bottom: 10px;
+  }
   .component-container{
     padding: 30px 10px 30px 10px;
     margin-top: 20px;

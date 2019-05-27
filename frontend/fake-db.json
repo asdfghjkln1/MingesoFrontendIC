@@ -36,8 +36,9 @@
   ],
 
   "users" : [
-    { "id": 1, "username": "Vicho", "pass": "pass", "rol" : "Admin"},
-    { "id": 2, "username": "Seba", "pass": "pass2", "rol" : "Manager"}
+    { "id": 1, "username": "Vicente", "pass": "pass", "rol" : "Admin"},
+    { "id": 2, "username": "Sebastian", "pass": "pass", "rol" : "Manager"},
+    { "id": 2, "username": "Francisco", "pass": "pass", "rol" : "Manager"}
   ],
 
   "precios" : [

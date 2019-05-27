@@ -5,6 +5,16 @@
         <h2 id="titulo">Registro de reservas</h2>
       </div>
       <div class="row">
+        <div class="col-lg-4 col-md-6 form-group">
+          <label>Filtro por código</label>
+          <input class="form-control" v-model="filtro_codigo" placeholder="Ingresar código de la reserva..." v-on:change="filtroCodigo">
+        </div>
+        <div class="col-lg-4 col-md-6 form-group">
+          <label>Filtro por nombre</label>
+          <input class="form-control" v-model="filtro_nombre" placeholder="Ingresar nombre del representante..." v-on:change="filtroNombre">
+        </div>
+      </div>
+      <div class="row">
         <table class="table table-striped table-stripped">
           <tr>
             <th><div href="#" v-on:click="sortRegistros('id')" class="sort-by">ID reserva</div></th>
@@ -38,14 +48,20 @@
 
 <script>
   import axios from 'axios';
-  const url = 'http://localhost:3000';
-  //const url = 'http://159.65.3.243:8090';
+  const urlTest = 'http://localhost:3000';
+  const url = 'http://159.65.3.243:8090';
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json'
   };
   const axiosInst = axios.create({
     baseURL: url,
+    timeout: 10000,
+    headers: headers
+  });
+
+  const axiosTest = axios.create({
+    baseURL: urlTest,
     timeout: 10000,
     headers: headers
   });
@@ -57,6 +73,8 @@
         reservas: [],
         sortActual: '',
         sortDir: 'asc',
+        filtro_nombre: '',
+        filtro_codigo: ''
       }
     },
     created() {
@@ -64,7 +82,7 @@
     },
     methods: {
       fetchReservas(){
-        axiosInst.get('events').then(
+        axiosTest.get('events').then(
           response => {
             if(response.status === 200){
               this.reservas = response.data; //._embedded.reservas;
@@ -88,6 +106,30 @@
         let fact = 1;
         if(this.sortDir === 'desc') fact = -1;
         this.reservas.sort((a, b) => (a[str] > b[str]) ? 1 : (a[str] === b[str]) ? ((a[str] > b[str]) ? fact : -1*fact) : -1*fact );
+      },
+      filtroCodigo(){
+        console.log("Filtrando por codigo: "+this.filtro_codigo);
+        axiosTest.get("/reservas/codigo/"+this.filtro_codigo).then(
+          response => {
+            if(response.status === 200){
+              self.events = response.data;
+              this.scheduler.update({events : self.events});
+            }
+          }).catch( error => {
+          console.log(error.toString());
+        });
+      },
+      filtroNombre(){
+        console.log("Filtrando por nombre: "+this.filtro_nombre);
+        axiosTest.get("/reservas/nombre/"+this.filtro_nombre).then(
+          response => {
+            if(response.status === 200){
+              self.events = response.data;
+              this.scheduler.update({events : self.events});
+            }
+          }).catch( error => {
+          console.log(error.toString());
+        });
       },
       /*marcarCancelados(){
         let elements = document.getElementsByClassName("status");
