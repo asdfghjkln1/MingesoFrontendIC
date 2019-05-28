@@ -77,4 +77,7 @@ footer *{
   box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
 }
 
+input {
+  text-align: center;
+}
 </style>

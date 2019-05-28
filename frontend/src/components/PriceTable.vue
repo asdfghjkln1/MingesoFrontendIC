@@ -1,8 +1,8 @@
 <template>
-  <div id="TablaPrecios">
-    <table class="table table-striped table-stripped">
+  <div id="TablaPrecios" class="table-responsive">
+    <table class="table table-bordered table-striped table-highlight">
       <thead class="thead-dark">
-      <tr>Precios habitaciones</tr>
+      <tr><td><h4>Precios habitaciones</h4></td></tr>
       <tr>
         <td>Tamaño</td>
         <td>Precio por noche</td>
@@ -11,8 +11,8 @@
       </thead>
       <tbody>
       <tr v-for="(precio, index) in precios">
-        <td><input v-model="precio.tipo" v-bind:disabled="disabled"></td>
-        <td>$ <input v-model="precio.precio" v-bind:disabled="disabled" v-on:change="editTipo(this, index)"></td>
+        <td><input v-model="precio.tipo" v-bind:disabled="disabled" v-on:change="editTipo(precio)"></td>
+        <td>$ <input v-model="precio.valor" v-bind:disabled="disabled" v-on:change="editTipo(precio)"></td>
         <td><i class="far fa-edit" role="button" @click="disabled = !disabled"></i><i class="fas fa-trash-alt" role="button" @click="deleteTipo(precio.id)"></i></td>
       </tr>
       <tr>
@@ -38,12 +38,17 @@
     },
     methods: {
       deleteTipo(index){
-        this.$emit("eliminarHabitacion", index);
+        console.log(index);
+        this.$emit("eliminarTipo", index);
       },
-      editTipo(price, index){
-        let newprice = this.precios[index].precio;
-        console.log(newprice);
-        this.$emit("editarPrecio", this.precios[i]);
+      editTipo(item){
+        let newItem = {
+          id: item.id,
+          tipo: item.tipo,
+          precio: parseInt(item.valor)
+        };
+        console.log(newItem);
+        this.$emit("editarTipo", newItem);
       },
       nuevoTipo(){
         if(this.tipo !== '' && this.precio !== ''){
@@ -56,11 +61,11 @@
           this.$emit('nuevoTipo', nuevo);
         }
       }
-    }
+    },
   }
 </script>
 
-<style>
+<style scoped>
   #TablaPrecios{
     padding: 20px;
   }

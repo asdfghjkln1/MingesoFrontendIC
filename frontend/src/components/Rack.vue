@@ -70,7 +70,7 @@
 
   const axiosInst = axios.create({
     baseURL: url,
-    timeout: 10000,
+    timeout: 20000,
     headers: headers
   });
 
@@ -144,14 +144,14 @@
             items: [
               {
                 text: "Cancelar reserva", onClick: function(args) {
-                var dp = args.source.calendar; dp.events.remove(args.source);
-                }
+                  confirm("Seguro desea cancelar esta reserva?");
+                  //console.log(args.source.data);
+                  this.cancelarReserva(args.source.data.id);
+                  //var dp = args.source.calendar; dp.events.remove(args.source);
+                }.bind(this)
               },
-              {
-                text: "Edit", onClick: function() {
-                  dp.events.edit(this.source);
-                }
-              },
+              {text:"Edit", onClick: function(args) {
+                  var dp = args.source.calendar; dp.events.edit(this.source); } },
               {
                 text: "Ir a reserva", onClick: function( args ) {
                   //Esto no funciona.
@@ -172,9 +172,7 @@
             args.data.bubbleHtml = "<div><b>Codigo reserva: " + args.data.codigo + "</b></div>" +
               "<div>Tipo reserva: " + args.data.tipo + "</div>" +
               "<div>Fecha realizado: " + args.data.fecha +"</div>" +
-              "<div>Valor: " + args.data.total + "</div>" +
-              "<br>" +
-              "<a href='/reservas/" + args.data.codigo + "' > Ir a reserva </a>";
+              "<div>Valor: " + args.data.total + "</div>";
             //"<router-link :to=\"{ name: 'reservas', params: { codigo_reserva: '" + args.data.codigo + "'}}\"> Ir a reserva </router-link>";
           },
           rowHeaderColumns : [{
@@ -216,6 +214,7 @@
             response => {
               if(response.status === 200) {
                 alert("Insertado con éxito");
+                this.insertModalVisible = false;
                 this.loadEvents();
               }
             }).catch( error => {
@@ -250,14 +249,25 @@
           console.log(error.toString());
         });
       },
-      editTipo(){
-        alert("No implementado.");
+      editTipo( tipo ){
+        alert("Aún no implementado")
+        /*axiosInst.post("/tipo/editar", tipo).then(
+          response => {
+            if(response.status === 200){
+              alert("Editado con éxito");
+              this.loadPrecios();
+            }
+          }
+        ).catch( error => {
+          console.log(error.toString());
+        });*/
       },
       newTipo( tipo ){
         axiosInst.post("/tipo/"+tipo.tipo+"/"+tipo.precio).then(
           response => {
             if(response.status === 200){
               alert("Agregado con éxito");
+              this.loadPrecios();
             }
           }
         ).catch( error => {
@@ -265,10 +275,24 @@
         });
       },
       deleteTipo( index ){
+        console.log("borrando " +index);
         axiosInst.post("/tipo/"+index).then(
           response => {
             if(response.status === 200){
               alert("Eliminado con éxito");
+              this.loadPrecios();
+            }
+          }
+        ).catch( error => {
+          console.log(error.toString());
+        });
+      },
+      cancelarReserva(index){
+        axiosInst.post("/reserva/delete/"+index).then(
+          response => {
+            if(response.status === 200){
+              alert("Eliminado con éxito");
+              this.loadEvents();
             }
           }
         ).catch( error => {
@@ -296,15 +320,15 @@
         alert("Dias: " + days);
         this.config.days = days + 1;
         this.config.startDate = inicio;
-        let todos = this.events;
+        /*let todos = this.events;
         this.events = [];
         for (event in todos) {
           if (event.start < fin && event.end > inicio) {
             this.events.push(event);
           }
-        }
-        //this.loadEvents();
-        this.scheduler.update()
+        }*/
+        this.loadEvents();
+        //this.scheduler.update()
       },
       loadInitialRange() {
         let inicio = document.getElementById("inicio");

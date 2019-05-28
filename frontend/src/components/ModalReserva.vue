@@ -64,11 +64,20 @@
       }
     },
     methods: {
+      generarCodigo( largo ) {
+        var result = 'R-';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (let i = 0; i < largo; i++ ) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+      },
       confirm() {
         if(this.name === '' || this.tipo === ''){
           return false;
         }
-        let codigo_reserva = "autogenerado"; //hay que autogenerar un codigo
+        let codigo_reserva = this.generarCodigo(6);
         let reservas = [];
         for(let i = 0; i < this.selected.length; i++){
           let reserva = {
@@ -76,7 +85,6 @@
             nombre: this.name,
             inicio: this.selected[i].start.value.split("T")[0] + " 00:00:00.000000",
             fin: this.selected[i].end.value.split("T")[0] + " 00:00:00.000000",
-            //tipo: selected[i].tipo,
             habitacion: {
               id : this.selected[i].resource
             },
