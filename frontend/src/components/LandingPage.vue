@@ -13,7 +13,7 @@ export default {
   data () {
     return {
       subtitle: 'Mingeso B-2 Grupo 1',
-      title: 'Iteración 1: Rack y reserva de habitaciones',
+      title: 'Iteración 1: Rack y reserva de habitaciones (2019)',
       authors: ['Vicente Rivera', 'Sebastián Salazar', 'Francisco Diaz'],
     }
   }
