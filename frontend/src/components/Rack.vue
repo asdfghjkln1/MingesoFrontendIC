@@ -25,21 +25,6 @@
         <DayPilotScheduler id="dp" :config="config" ref="scheduler" />
         </div>
       </div>
-      <!--
-      <form v-if="checkAdmin" class="row">
-        <h6> Nueva habitación</h6>
-        <br>
-        <div class="form-group">
-          <label for="num_habitacion">Identificación de la habitación</label>
-          <input class="form-control" id="num_habitacion" placeholder="Ej. 103, A305, etc" v-model="num_hab">
-        </div>
-        <div class="form-group">
-          <label for="tipo_habitacion">Tipo habitación</label>
-          <input class="form-control" id="tipo_habitacion" placeholder="Ej. Simple, Doble, etc" v-model="tipo_hab">
-        </div>
-        <button role="button" type="submit" id="btn_nueva_hab"> Confirmar </button>
-      </form>
-      -->
       <div class="row">
         <div class="col-lg-8 col-md-10">
           <TablaPrecios :precios="precios" v-on:editarTipo="editTipo" v-on:eliminarTipo="deleteTipo" v-on:nuevoTipo="newTipo"></TablaPrecios>
@@ -61,16 +46,10 @@
     'Content-Type': 'application/json'
   };
   const url = 'http://157.230.138.200:8090/mingesoback/';
-  /*const urlTest = "http://127.0.0.1:3000/";
-  const axiosTest = axios.create({
-    baseURL: url,
-    timeout: 10000,
-    headers: headers
-  });*/
 
   const axiosInst = axios.create({
     baseURL: url,
-    timeout: 20000,
+    timeout: 30000,
     headers: headers
   });
 
@@ -150,8 +129,8 @@
                   //var dp = args.source.calendar; dp.events.remove(args.source);
                 }.bind(this)
               },
-              {text:"Edit", onClick: function(args) {
-                  var dp = args.source.calendar; dp.events.edit(this.source); } },
+              /*{text:"Edit", onClick: function(args) {
+                  var dp = args.source.calendar; dp.events.edit(this.source); } },*/
               {
                 text: "Ir a reserva", onClick: function( args ) {
                   //Esto no funciona.
@@ -159,7 +138,7 @@
                 }.bind(this)
               }]
           }),
-          treeEnabled: true,
+          treeEnabled: false,
           rowHeaderWidth: 120,
           rowHeaderWidthAutoFit: false,
           rowMinHeight: 50,
@@ -176,15 +155,18 @@
             //"<router-link :to=\"{ name: 'reservas', params: { codigo_reserva: '" + args.data.codigo + "'}}\"> Ir a reserva </router-link>";
           },
           rowHeaderColumns : [{
-            html: 'Habitación', //No funciona
-            width: 150
-          }, {
-            text: 'Tamaño', //No funciona
-            width: 50
-          }, {
-            title: 'Estado', //No funciona
+            title: "Habitación", //No funciona
             width: 60
-          }]
+          }, {
+            title: "Tamaño", //No funciona
+            width: 70
+          }],
+          onBeforeResHeaderRender: function(args) {
+            if (args.resource.loaded === false) {
+              args.resource.html += " (loaded dynamically)";
+              args.resource.backColor = "gray";
+            }
+          },
         },
       }
     },
@@ -226,12 +208,14 @@
 
       },
       filtroCodigo(){
+        let self = this;
         console.log("Filtrando por codigo: "+this.filtro_codigo);
         axiosInst.get("/reservas/codigo/"+this.filtro_codigo).then(
           response => {
             if(response.status === 200){
-              self.events = response.data;
-              this.scheduler.update({events : self.events});
+              self.reservas = response.data;
+              this.parseReservas(response.data);
+              self.scheduler.update({ events : self.events});
             }
         }).catch( error => {
           console.log(error.toString());
@@ -239,11 +223,13 @@
       },
       filtroNombre(){
         console.log("Filtrando por nombre: "+this.filtro_nombre);
+        let self = this;
         axiosInst.get("/reservas/nombre/"+this.filtro_nombre).then(
           response => {
             if(response.status === 200){
-              self.events = response.data;
-              this.scheduler.update({events : self.events});
+              self.reservas = response.data;
+              this.parseReservas(response.data);
+              this.scheduler.update({ events : self.events});
             }
           }).catch( error => {
           console.log(error.toString());
@@ -364,10 +350,10 @@
         for(let i = 0; i < habitaciones.length; i++){
           let resource = {
             id: habitaciones[i].id,
-            name: habitaciones[i].number,
+            name: " - " + habitaciones[i].number,
             valor: habitaciones[i].tipo.valor,
             columns: [{
-              html: habitaciones[i].tipo.cap
+              html: habitaciones[i].tipo.tipo,
             }]
           };
           resources.push(resource);
@@ -401,7 +387,6 @@
             if(response.status === 200){
               self.reservas = response.data;
               this.parseReservas(response.data);
-              //self.events = reservas;
               this.scheduler.update({ events : self.events});
             }
             else{

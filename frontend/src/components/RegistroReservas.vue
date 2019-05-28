@@ -46,15 +46,14 @@
 
 <script>
   import axios from 'axios';
-  const urlTest = 'http://localhost:3000';
-  const url = 'http://157.230.138.200:8090/mingesoback';
+  const url = 'http://157.230.138.200:8090/mingesoback/';
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json'
   };
   const axiosInst = axios.create({
     baseURL: url,
-    timeout: 10000,
+    timeout: 30000,
     headers: headers
   });
 
@@ -74,10 +73,11 @@
     },
     methods: {
       fetchReservas(){
+        let self = this
         axiosInst.get('reservas').then(
           response => {
             if(response.status === 200){
-              this.reservas = response.data; //._embedded.reservas;
+              self.reservas = response.data; //._embedded.reservas;
             }
             else{
               console.log("ERROR FETCH (temporal)");
