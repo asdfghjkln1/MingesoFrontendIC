@@ -11,11 +11,11 @@ Vue.use(Router);
 
 const router = new Router({
     routes : [
-      { name: 'home', path: '/', component: LandingPage , meta: { requiresAuth: true}},
-      { name: 'rack', path: '/rack', component: Rack, meta: { requiresAuth: true}},
-      { name: 'reservas', path: '/reservas/:codigo_reserva', component: InfoReserva, meta: { requiresAuth: true}},
+      { name: 'home', path: '/', component: LandingPage , meta: { requiresAuth: false}},
+      { name: 'rack', path: '/rack', component: Rack, meta: { requiresAuth: false}},
+      { name: 'reservas', path: '/reservas/:codigo', component: InfoReserva, meta: { requiresAuth: false}},
       { name: 'registros', path: '/registros', component: RegistroReservas, meta: { requiresAuth: true}},
-      { name: 'habitaciones', path: '/habitaciones', component: Habitaciones},
+      { name: 'habitaciones', path: '/habitaciones', component: Habitaciones, meta: { requiresAuth: true}},
       { name: 'login', path: '/login', component: Login}
       ]
 });

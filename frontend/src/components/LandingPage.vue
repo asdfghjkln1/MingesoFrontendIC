@@ -1,6 +1,6 @@
 <template>
   <div id="frontpage">
-    <h1 class="title">{{ title }} (Cambio de prueba)</h1>
+    <h1 class="title">{{ title }}</h1>
     <h2>  < < {{ subtitle}} > ></h2>
     <ul v-for="author in authors">
       <li><h5>{{ author}} </h5></li>
@@ -25,7 +25,8 @@ export default {
 
 #frontpage h1{
   font-size: 48px;
-  padding: 5px;
+  padding: 20px;
+
 }
 
 .title{

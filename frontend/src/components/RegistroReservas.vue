@@ -24,7 +24,6 @@
             <th><div href="#" v-on:click="sortRegistros('end')" class="sort-by">Fecha fin</div></th>
             <th><div href="#" v-on:click="sortRegistros('tipo')" class="sort-by">Tipo reserva</div></th>
             <th><div href="#" v-on:click="sortRegistros('fecha')" class="sort-by">Fecha realizado</div></th>
-            <th><div href="#" v-on:click="sortRegistros('status')" class="sort-by">Estado reserva</div></th>
             <th><div href="#" v-on:click="sortRegistros('total')" class="sort-by">Total</div></th>
           </tr>
           <tbody>
@@ -36,8 +35,7 @@
             <td>{{reserva.fin.substring(0, 10)}}</td>
             <td>{{reserva.tipo}}</td>
             <td>{{reserva.fecha_reserva.substring(0, 10)}}</td>
-            <td class="status">{{reserva.status}}</td>
-            <td>{{reserva.final_descuento}}</td>
+            <td>{{reserva.valor}}</td>
           </tr>
           </tbody>
         </table>
@@ -103,7 +101,11 @@
       },
       filtroCodigo(){
         console.log("Filtrando por codigo: "+this.filtro_codigo);
-        axiosInst.get("/reservas/codigo/"+this.filtro_codigo).then(
+        let url = "/reservas/codigo/";
+        if(this.filtro_codigo === ''){
+          url = "/reservas"
+        }
+        axiosInst.get(url +this.filtro_codigo).then(
           response => {
             if(response.status === 200){
               this.reservas = response.data;
@@ -114,7 +116,11 @@
       },
       filtroNombre(){
         console.log("Filtrando por nombre: " + this.filtro_nombre);
-        axiosInst.get("/reservas/nombre/"+this.filtro_nombre).then(
+        let url = "/reservas/nombre/";
+        if(this.filtro_nombre === ''){
+          url = "/reservas"
+        }
+        axiosInst.get(url + this.filtro_nombre).then(
           response => {
             if(response.status === 200){
               this.reservas = response.data;

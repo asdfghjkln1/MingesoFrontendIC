@@ -2,14 +2,14 @@
   <div id="info-reserva" class="reserva-container">
     <div class="container">
       <div class="info-container">
-        <table class="table table-striped table-dark">
+        <table class="table table-striped">
           <tr>
             <th><h1 class="titulo">Información de la Reserva</h1></th>
           </tr>
           <tbody>
           <tr>
             <td colspan="1"> Código de reserva </td>
-            <td colspan="3"> {{ codigo_reserva }}</td>
+            <td colspan="3"> {{ codigo }}</td>
           </tr>
           <template v-for="reserva in reservas">
             <tr>
@@ -62,27 +62,25 @@
 
 <script>
   import axios from 'axios';
-  //const url = 'http://159.65.3.243:8090/';
-  const url = 'http://127.0.0.1:3000/';
+  const url = 'http://159.65.3.243:8090/';
+  //const url = 'http://127.0.0.1:3000/';
+
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json'
+  };
 
   const axiosInst = axios.create({
     baseURL: url,
-    timeout: 10000
+    timeout: 10000,
+    headers: headers
   });
 
 export default {
-  props: ['codigo_reserva'],
+  props: ['codigo'],
   data () {
     return {
-      reservas: [{
-        id : '',
-        codigo: '',
-        text: '',
-        tipo: '',
-        start: '',
-        end: '',
-        total: '',
-      }]
+      reservas: []
     }
   },
   methods: {
@@ -94,11 +92,11 @@ export default {
       document.getElementById("total").innerHTML = total.toString()
     },
     getReservas(){
-      axiosInst.get(url + '/reservas/' + this.codigo_reserva).then(
+      axiosInst.get('/reservas/codigo/' + this.codigo).then(
         response => {
           if(response.status = 200){
             console.log("Insertado exitósamente")
-            this.filtroCodigoTests(response.data);
+            this.reservas = response.data;
             this.calcularTotal();
           }
           else{
@@ -109,17 +107,6 @@ export default {
         console.log(error.toString())
       })
     },
-    filtroCodigoTests( data ){
-      let filtrados = [];
-      for( reserva in data){
-        console.log("cod_reserva: "+reserva.codigo + " = "+this.codigo_reserva);
-        if(reserva.codigo === this.codigo_reserva){
-          filtrados.push(reserva);
-        }
-      }
-      console.log(filtrados.toString());
-      this.reservas = filtrados;
-    }
   },
   mounted: function(){
     this.getReservas();

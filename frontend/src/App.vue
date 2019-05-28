@@ -25,9 +25,9 @@ export default {
     authors: ['Vicente Rivera', 'Sebastián Salazar', 'Francisco Diaz'],
   }},
   mounted() {
-    if(!this.authenticated) {
+    /*if(!localStorage.getItem('usuario')) {
       this.$router.replace({ name: "login" });
-    }
+    }*/
   },
   methods: {
     setAuthenticated() {
@@ -70,7 +70,8 @@ footer *{
 #main-container{
   margin: 0vh 10vh 0vh 10vh;
   background-color: ghostwhite;
-  height: 200vh;
+  height: 100%;
+  object-fit: contain;
   -webkit-box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
   -moz-box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);
   box-shadow: 0px 10px 15px 0px rgba(128,128,128,1);

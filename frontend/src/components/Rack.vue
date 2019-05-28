@@ -148,15 +148,15 @@
                 }
               },
               {
-                text: "Edit", onclick: function() {
+                text: "Edit", onClick: function() {
                   dp.events.edit(this.source);
                 }
               },
               {
-                text: "Ir a reserva", onclick: function( args ) {
+                text: "Ir a reserva", onClick: function( args ) {
                   //Esto no funciona.
-                  this.$route.push("/reservas/" + args.data.codigo);
-                }
+                  this.$router.push("/reservas/" + args.source.data.codigo);
+                }.bind(this)
               }]
           }),
           treeEnabled: true,
@@ -174,7 +174,8 @@
               "<div>Fecha realizado: " + args.data.fecha +"</div>" +
               "<div>Valor: " + args.data.total + "</div>" +
               "<br>" +
-              "<a href='/reservas/"+ args.data.codigo +"'>Ir a la reserva</a>" //"<router-link :to=\"{ name: 'reservas', params: { codigo_reserva: '" + args.data.codigo + "'}}\"> Ir a reserva </router-link>";
+              "<a href='/reservas/" + args.data.codigo + "' > Ir a reserva </a>";
+            //"<router-link :to=\"{ name: 'reservas', params: { codigo_reserva: '" + args.data.codigo + "'}}\"> Ir a reserva </router-link>";
           },
           rowHeaderColumns : [{
             html: 'Habitación', //No funciona
