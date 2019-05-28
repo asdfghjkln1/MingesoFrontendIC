@@ -68,19 +68,21 @@
         if(this.name === '' || this.tipo === ''){
           return false;
         }
-        let codigo_reserva = "ABC"; //hay que autogenerar un codigo
+        let codigo_reserva = "autogenerado"; //hay que autogenerar un codigo
         let reservas = [];
         for(let i = 0; i < this.selected.length; i++){
           let reserva = {
             codigo: codigo_reserva,
             nombre: this.name,
-            inicio: this.selected[i].start.value,
-            fin: this.selected[i].end.value,
+            inicio: this.selected[i].start.value.split("T")[0] + " 00:00:00.000000",
+            fin: this.selected[i].end.value.split("T")[0] + " 00:00:00.000000",
             //tipo: selected[i].tipo,
             habitacion_id: this.selected[i].resource,
-            fecha_reserva: new Date().toJSON().slice(0,10),
-            valor: this.subtotales[i]
+            fecha_reserva: new Date().toJSON().slice(0,10) + " 00:00:00.000000",
+            valor: this.subtotales[i],
+            valor_final: 1
           };
+          console.log("Insertando: "+ reserva.toString());
           reservas.push(reserva);
         }
         this.$emit('confirm', reservas);

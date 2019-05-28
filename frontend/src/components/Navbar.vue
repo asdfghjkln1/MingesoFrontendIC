@@ -18,9 +18,9 @@
             <li class="nav-item">
               <router-link  class="nav-link" to="/habitaciones">Habitaciones</router-link>
             </li>
-            <li v-if="!auth" class="nav-item"> <!-- No puedo actualizarlo -->
+            <!--<li v-if="!auth" class="nav-item"> <!-- No puedo actualizarlo
               <p class="nav-link">Logeado como {{ user }} - {{ rol }}</p>
-            </li>
+            </li>-->
             <li v-if="auth" class="nav-item">
               <div class="nav-link" v-on:click="logout">Salir</div>
             </li>

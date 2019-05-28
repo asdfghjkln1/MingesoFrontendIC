@@ -48,7 +48,7 @@
 
 <script>
   import axios from 'axios';
-  //const url = 'http://localhost:3000';
+  const urlTest = 'http://localhost:3000';
   const url = 'http://157.230.138.200:8090/mingesoback';
   const headers = {
     'Access-Control-Allow-Origin': '*',

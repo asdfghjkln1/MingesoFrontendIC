@@ -60,16 +60,16 @@
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json'
   };
-  const url = 'http://localhost:8090/mingesoback/';
-  const urlTest = "http://127.0.0.1:3000/";
-  const axiosInst = axios.create({
+  const url = 'http://157.230.138.200:8090/mingesoback/';
+  /*const urlTest = "http://127.0.0.1:3000/";
+  const axiosTest = axios.create({
     baseURL: url,
     timeout: 10000,
     headers: headers
-  });
+  });*/
 
-  const axiosTest = axios.create({
-    baseURL: urlTest,
+  const axiosInst = axios.create({
+    baseURL: url,
     timeout: 10000,
     headers: headers
   });
@@ -89,7 +89,8 @@
         insertModalVisible: false,
         selectedRange: [],
         resources : [],
-        habitaciones: [],
+        habitaciones: [], //Para comparar
+        reservas: [], //Para comparar
         events: [],
         precios: [],
         // Para nueva habitacion
@@ -208,14 +209,16 @@
     methods: {
       nuevaReserva( reservas ){
         console.log( reservas );
-        for(let reserva in reservas){
-          axiosInst.post("reserva/insert", reserva).then(
+        for(let i = 0; i< reservas.length; i++){
+          console.log("Insertando: " + reservas[i]);
+          axiosInst.post("reserva/insert", reservas[i]).then(
             response => {
               if(response.status === 200) {
                 alert("Insertado con éxito");
                 this.loadEvents();
               }
             }).catch( error => {
+              console.log("Error insertar Num " + i);
               console.log(error.toString());
             }
           );
@@ -224,7 +227,7 @@
       },
       filtroCodigo(){
         console.log("Filtrando por codigo: "+this.filtro_codigo);
-        axiosTest.get("/reservas/codigo/"+this.filtro_codigo).then(
+        axiosInst.get("/reservas/codigo/"+this.filtro_codigo).then(
           response => {
             if(response.status === 200){
               self.events = response.data;
@@ -236,7 +239,7 @@
       },
       filtroNombre(){
         console.log("Filtrando por nombre: "+this.filtro_nombre);
-        axiosTest.get("/reservas/nombre/"+this.filtro_nombre).then(
+        axiosInst.get("/reservas/nombre/"+this.filtro_nombre).then(
           response => {
             if(response.status === 200){
               self.events = response.data;
@@ -250,7 +253,7 @@
         alert("No implementado.");
       },
       newTipo( tipo ){
-        axiosTest.post("/tipo/"+tipo.tipo+"/"+tipo.precio).then(
+        axiosInst.post("/tipo/"+tipo.tipo+"/"+tipo.precio).then(
           response => {
             if(response.status === 200){
               alert("Agregado con éxito");
@@ -261,7 +264,7 @@
         });
       },
       deleteTipo( index ){
-        axiosTest.post("/tipo/"+index).then(
+        axiosInst.post("/tipo/"+index).then(
           response => {
             if(response.status === 200){
               alert("Eliminado con éxito");
@@ -315,7 +318,7 @@
       },
       loadResources() {
         var self = this;
-        axiosTest.get('habitaciones').then(
+        axiosInst.get('habitaciones').then(
           response => {
             if(response.status === 200){
               self.habitaciones = response.data;
@@ -346,13 +349,35 @@
         }
         this.resources = resources;
       },
+      parseReservas( data ) {
+        let events = [];
+        //let pisos = [];
+        for(let i = 0; i < data.length; i++){
+          let event = {
+            id: data[i].id,
+            codigo: data[i].codigo,
+            text: data[i].nombre,
+            start: data[i].inicio.split(" ")[0],
+            end: data[i].fin.split(" ")[0],
+            resource: data[i].habitacion.id,
+            fecha: data[i].fecha_reserva.split(" ")[0],
+            tipo: "Particular",
+            status: "Check In",
+            total: data[i].valor,
+          };
+          events.push(event);
+        }
+        this.events = events;
+      },
       loadEvents(){
         var self = this;
-        axiosTest.get('events').then(
+        axiosInst.get('reservas').then(
           response => {
             if(response.status === 200){
-              self.events = response.data;
-              this.scheduler.update({events : self.events});
+              self.reservas = response.data;
+              this.parseReservas(response.data);
+              //self.events = reservas;
+              this.scheduler.update({ events : self.events});
             }
             else{
               console.log("ERROR STATUS != 200");
@@ -364,7 +389,7 @@
       },
       loadPrecios(){
         var self = this;
-        axiosInst.get('precios').then(
+        axiosInst.get('tipos').then(
           response => {
             if(response.status === 200){
               self.precios = response.data;
