@@ -77,7 +77,9 @@
             inicio: this.selected[i].start.value.split("T")[0] + " 00:00:00.000000",
             fin: this.selected[i].end.value.split("T")[0] + " 00:00:00.000000",
             //tipo: selected[i].tipo,
-            habitacion_id: this.selected[i].resource,
+            habitacion: {
+              id : this.selected[i].resource
+            },
             fecha_reserva: new Date().toJSON().slice(0,10) + " 00:00:00.000000",
             valor: this.subtotales[i],
             valor_final: 1
