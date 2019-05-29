@@ -33,7 +33,7 @@
             <td>{{reserva.nombre}}</td> <!--Cambiar por reserva.nombre-->
             <td>{{reserva.inicio.substring(0, 10)}}</td> <!--Cambiar por reserva.inicio/fin-->
             <td>{{reserva.fin.substring(0, 10)}}</td>
-            <td>{{reserva.tipo_reserva}}</td>
+            <td>{{reserva.tipo_Reserva}}</td>
             <td>{{reserva.fecha_reserva.substring(0, 10)}}</td>
             <td>{{reserva.valor}}</td>
           </tr>
