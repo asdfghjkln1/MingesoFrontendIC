@@ -88,6 +88,7 @@
             habitacion: {
               id : this.selected[i].resource
             },
+            tipo_reserva: this.selected[i].tipo,
             fecha_reserva: new Date().toJSON().slice(0,10) + " 00:00:00.000000",
             valor: this.subtotales[i],
             valor_final: 1

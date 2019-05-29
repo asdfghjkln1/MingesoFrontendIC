@@ -22,7 +22,7 @@
             </tr>
             <tr>
               <td colspan="1"> Tipo habitación </td>
-              <td colspan="3"> {{ reserva.tipo }}</td>
+              <td colspan="3"> {{ reserva.tipo_reserva }}</td>
             </tr>
             <tr>
               <td colspan="1"> Inicio reserva </td>

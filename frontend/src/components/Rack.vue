@@ -113,7 +113,7 @@
           onEventDeleted: function (args) {
             this.message("Event deleted: " + args.e.text());
           },
-          eventClickHandling: "Select",
+          eventClickHandling: "Edit",
           onEventEdited: function (args) {
             this.message("Event selected: " + args.e.text());
           },
@@ -133,7 +133,6 @@
                   var dp = args.source.calendar; dp.events.edit(this.source); } },*/
               {
                 text: "Ir a reserva", onClick: function( args ) {
-                  //Esto no funciona.
                   this.$router.push("/reservas/" + args.source.data.codigo);
                 }.bind(this)
               }]
@@ -143,13 +142,15 @@
           rowHeaderWidthAutoFit: false,
           rowMinHeight: 50,
           onBeforeEventRender: function(args) {
-            if(args.data.tipo === "Empresa"){
+            if(args.data.tipo_reserva === "Empresa"){
               args.data.barColor = "red";
-            }else if(args.data.tipo === "Particular"){
+            }else if(args.data.tipo_reserva === "Particular"){
               args.data.barColor = "blue";
+            }else if(args.data.tipo_reserva){
+              args.data.BackgroundColor = "yellow";
             }
             args.data.bubbleHtml = "<div><b>Codigo reserva: " + args.data.codigo + "</b></div>" +
-              "<div>Tipo reserva: " + args.data.tipo + "</div>" +
+              "<div>Tipo reserva: " + args.data.tipo_reserva + "</div>" +
               "<div>Fecha realizado: " + args.data.fecha +"</div>" +
               "<div>Valor: " + args.data.total + "</div>";
             //"<router-link :to=\"{ name: 'reservas', params: { codigo_reserva: '" + args.data.codigo + "'}}\"> Ir a reserva </router-link>";
@@ -161,12 +162,6 @@
             title: "Tamaño", //No funciona
             width: 70
           }],
-          onBeforeResHeaderRender: function(args) {
-            if (args.resource.loaded === false) {
-              args.resource.html += " (loaded dynamically)";
-              args.resource.backColor = "gray";
-            }
-          },
         },
       }
     },
@@ -371,8 +366,8 @@
             start: data[i].inicio.split(" ")[0],
             end: data[i].fin.split(" ")[0],
             resource: data[i].habitacion.id,
+            tipo_reserva: data[i].tipo_reserva,
             fecha: data[i].fecha_reserva.split(" ")[0],
-            tipo: "Particular",
             status: "Check In",
             total: data[i].valor,
           };
