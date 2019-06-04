@@ -1,0 +1,39 @@
+config:
+  target: 'http://157.230.138.200:8090/mingesoback'
+  ensure:
+    - median: 60000
+    - p95: 120000
+    - maxErrorRate: 10
+  phases:
+  - duration: 20
+    arrivalRate: 5
+  - duration: 10
+    arrivalRate: 5
+  environments:
+    lowload:
+      phases:
+      - duration: 20
+        arrivalRate: 5
+      - duration: 30
+        arrivalRate: 6
+    highload:
+      phases:
+      - duration: 60
+        arrivalRate: 5
+      - duration: 120
+        arrivalRate: 10
+        rampTo: 50
+  defaults:
+    headers:
+      x-my-service-auth: '987401838271002188298567'
+scenarios:
+  - flow:
+      - get:
+          url: "/reservas"
+          weight: 5
+      - get:
+          url: "/habitaciones"
+          weight: 3
+      - get:
+          url: "/tipos"
+          weight: 1

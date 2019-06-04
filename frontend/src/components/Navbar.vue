@@ -18,11 +18,11 @@
             <li class="nav-item">
               <router-link  class="nav-link" to="/habitaciones">Habitaciones</router-link>
             </li>
-            <!--<li v-if="!auth" class="nav-item"> <!-- No puedo actualizarlo
-              <p class="nav-link">Logeado como {{ user }} - {{ rol }}</p>
-            </li>-->
+            <li v-if="auth" class="nav-item"> <!-- No puedo actualizarlo -->
+              <p class="nav-link">{{ username }}</p>
+            </li>
             <li v-if="auth" class="nav-item">
-              <div class="nav-link" v-on:click="logout">Salir</div>
+              <div id="logout-button" class="nav-link" v-on:click="logout">Salir</div>
             </li>
           </ul>
         </div>
@@ -37,20 +37,38 @@ export default {
   props: [ 'authenticated' ],
   data: function() {
     return {
-      user: '',
-      rol: '',
-      auth: false,
     }
   },
   methods: {
     logout(){
-      console.log("Logging out...");
       localStorage.clear();
-      this.$router.replace({name: "login"});
       this.$emit('logout');
+      console.log("Logging out...");
+      this.$router.replace({name: "login"});
     },
   },
-  mounted: function() {
+  computed: {
+    auth: {
+      get: function() {
+        console.log("auth computed: "+this.authenticated);
+        return this.authenticated;
+      },
+      set: function(value){
+        this.authenticated = value;
+      }
+    },
+    username: {
+      get: function() {
+        let user = localStorage.getItem('usuario');
+        if(user){
+          this.auth = true;
+          user = JSON.parse(user);
+          return user.nombre + " ( " + user.rol +" )";
+        }
+      },
+    }
+  },
+  /*mounted: function() {
       let user = localStorage.getItem('usuario');
       if(user){
         this.auth = true;
@@ -58,7 +76,7 @@ export default {
         this.user = user.user;
         this.rol = user.rol;
       }
-  },
+  },*/
   /*watch: {
     user(newUser) {
       console.log(newUser);

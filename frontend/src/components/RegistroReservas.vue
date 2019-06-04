@@ -7,11 +7,11 @@
       <div class="row">
         <div class="col-lg-4 col-md-6 form-group">
           <label>Filtro por código</label>
-          <input class="form-control" v-model="filtro_codigo" placeholder="Ingresar código de la reserva..." v-on:change="filtroCodigo">
+          <input id="filtro-codigo" class="form-control" v-model="filtro_codigo" placeholder="Ingresar código de la reserva..." v-on:change="filtroCodigo">
         </div>
         <div class="col-lg-4 col-md-6 form-group">
           <label>Filtro por nombre</label>
-          <input class="form-control" v-model="filtro_nombre" placeholder="Ingresar nombre del representante..." v-on:change="filtroNombre">
+          <input id="filtro-nombre" class="form-control" v-model="filtro_nombre" placeholder="Ingresar nombre del representante..." v-on:change="filtroNombre">
         </div>
       </div>
       <div class="row">

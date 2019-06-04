@@ -16,7 +16,8 @@
     "bootstrap-vue": "^2.0.0-rc.20",
     "daypilot-pro-vue": "https://npm.daypilot.org/daypilot-pro-vue/trial/2019.1.3572.tar.gz",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "artillery": "^1.6.0-28"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

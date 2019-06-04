@@ -2,7 +2,7 @@
   <div id="app">
     <Navbar v-bind:authenticated="authenticated" v-bind:parent="this" @logout="logout"></Navbar>
     <div id="main-container">
-      <router-view @autenticated="setAuthenticated"></router-view>
+      <router-view @authenticated="setAuthenticated"></router-view>
       <footer>
         <p>Creador por {{subtitle}}:</p><br>
         <ul v-for="author in authors">
@@ -31,7 +31,9 @@ export default {
   },
   methods: {
     setAuthenticated() {
+      console.log("Logeado");
       this.authenticated = true;
+      this.$router.replace({name: "home"});
     },
 
     logout() {

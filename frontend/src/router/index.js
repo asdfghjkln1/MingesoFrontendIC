@@ -13,10 +13,10 @@ const router = new Router({
     routes : [
       { name: 'home', path: '/', component: LandingPage , meta: { requiresAuth: false}},
       { name: 'rack', path: '/rack', component: Rack, meta: { requiresAuth: false}},
-      { name: 'reservas', path: '/reservas/:codigo', component: InfoReserva, meta: { requiresAuth: false}},
+      { name: 'reservas', path: '/reservas/:codigo', component: InfoReserva, meta: { requiresAuth: true}},
       { name: 'registros', path: '/registros', component: RegistroReservas, meta: { requiresAuth: true}},
       { name: 'habitaciones', path: '/habitaciones', component: Habitaciones, meta: { requiresAuth: true}},
-      { name: 'login', path: '/login', component: Login}
+      { name: 'login', path: '/login', component: Login, meta: { requiresAuth: false }}
       ]
 });
   

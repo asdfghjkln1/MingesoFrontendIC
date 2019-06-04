@@ -11,7 +11,7 @@
         <input id="pass" class="form-control" type="password" name="pass" v-model="password"/>
       </div>
      <br/>
-      <button class="btn btn-primary" type="button" v-on:click="login()">Ingresar</button>
+      <button class="btn btn-primary" type="button" v-on:click="login">Ingresar</button>
     </form>
   </div>
 </template>
@@ -50,12 +50,12 @@
             for(let i = 0; i < response.data.length; i++){
               if(response.data[i].usuario === this.username && response.data[i].password === this.password){
                 let user = {
-                  nombre: response.data[i].username,
+                  nombre: response.data[i].usuario,
                   rol: response.data[i].rol
                 };
                 localStorage.setItem('usuario', JSON.stringify(user));
                 this.$emit("authenticated");
-                this.$router.replace({name: "home"});
+                console.log("despues de login event");
                 return true;
               }
             }
@@ -68,7 +68,7 @@
           console.log("Ha ocurrido un error");
           console.log(error.toString())
         });
-      }
+      },
     }
   }
 </script>
