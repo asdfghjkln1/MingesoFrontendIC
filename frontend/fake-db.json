@@ -36,9 +36,9 @@
   ],
 
   "users" : [
-    { "id": 1, "username": "Vicente", "pass": "pass", "rol" : "Admin"},
-    { "id": 2, "username": "Sebastian", "pass": "pass", "rol" : "Manager"},
-    { "id": 2, "username": "Francisco", "pass": "pass", "rol" : "Manager"}
+    { "id": 1, "username": "Vicente", "password": "pass", "rol" : "Admin", "token": "1247asd78d"},
+    { "id": 2, "username": "Sebastian", "password": "pass", "rol" : "Manager", "token": "qwequwd8d"},
+    { "id": 3, "username": "Francisco", "password": "pass", "rol" : "Manager", "token": "asd2dj98d"}
   ],
 
   "precios" : [

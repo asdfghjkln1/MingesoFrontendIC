@@ -4,23 +4,23 @@
             <table class="table table-striped">
                 <tr>
                     <th><h1 class="titulo">Editor de habitaciones</h1></th>
-                    <b-button variant="outline-primary" style="margin: 12% -470% 0 0;" v-b-modal.modal-new-habitacion v-if="this.rol === 'administrador'">Agregar</b-button>
+                    <b-button variant="outline-primary" style="margin: 12% -470% 0 0;" v-b-modal.modal-new-habitacion v-if="isAdmin">Agregar</b-button>
                 </tr>
                 <tbody>
                     <tr>
                         <td colspan="1"> Id de habitación </td>
                         <td colspan="1"> Numero</td>
                         <td colspan="1"> Tipo </td>
-                        <td colspan="1" v-if="this.rol === 'administrador'"> </td>
-                        <td colspan="1" v-if="this.rol === 'administrador'"> </td>
+                        <td colspan="1" v-if="isAdmin"> </td>
+                        <td colspan="1" v-if="isAdmin"> </td>
                     </tr>
                     <tr v-for="habitacion in habitaciones">
                         
                         <td colspan="1"> {{habitacion.id}} </td>
                         <td colspan="1">{{habitacion.number}}</td>
                         <td colspan="1">{{habitacion.tipo.tipo}} </td>
-                        <td v-if="rol === 'administrador'"><b-button variant="outline-primary" v-b-modal.modal-edit-habitacion @click="showModal(habitacion)">Editar</b-button></td>
-                        <td v-if="rol === 'administrador'"><b-button variant="outline-danger" @click="deleteHabitacion(habitacion)">Eliminar</b-button></td>
+                        <td v-if="isProfileLoaded"><b-button v-if="isAdmin" variant="outline-primary" v-b-modal.modal-edit-habitacion @click="showModal(habitacion)">Editar</b-button></td>
+                        <td v-if="isProfileLoaded"><b-button v-if="isAdmin" variant="outline-danger" @click="deleteHabitacion(habitacion)">Eliminar</b-button></td>
                     </tr>
                 </tbody>
             </table>
@@ -83,11 +83,12 @@
         headers: headers
     });
 
+    import { mapGetters, mapState} from "vuex";
+
 export default {
     name: 'Habitaciones',
     data() {
         return {
-            rol: null,
             habitaciones: [],
             tipo: null,
             habitacionAux: '',
@@ -98,13 +99,14 @@ export default {
         }
     },
     created() {
-        this.getHabitaciones();
-        this.getTipo();
-        this.rol = JSON.parse(localStorage.usuario).rol;
+      this.getHabitaciones();
+      this.getTipo();
+    },
+    computed: {
+      ...mapGetters(['getProfile', 'isAuthenticated', 'isProfileLoaded', 'isAdmin']),
     },
     methods: {
         getHabitaciones() {
-            console.log(localStorage.usuario);
             axiosInst.get(url + '/habitaciones').then(
                 response => {
                     if(response.status = 200){

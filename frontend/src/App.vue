@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <Navbar v-bind:authenticated="authenticated" v-bind:parent="this" @logout="logout"></Navbar>
+    <Navbar v-bind:parent="this"></Navbar>
     <div id="main-container">
-      <router-view @authenticated="setAuthenticated"></router-view>
+      <router-view></router-view>
       <footer>
         <p>Creador por {{subtitle}}:</p><br>
         <ul v-for="author in authors">
@@ -12,10 +12,10 @@
     </div>
   </div>
 </template>
-
 <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
 <script>
 import Navbar from './components/Navbar.vue'
+import { USER_REQUEST } from './store/actions/user.consts.js'
 
 export default {
   name: 'App',
@@ -24,20 +24,9 @@ export default {
     authenticated: false,
     authors: ['Vicente Rivera', 'Sebastián Salazar', 'Francisco Diaz'],
   }},
-  mounted() {
-    /*if(!localStorage.getItem('usuario')) {
-      this.$router.replace({ name: "login" });
-    }*/
-  },
-  methods: {
-    setAuthenticated() {
-      console.log("Logeado");
-      this.authenticated = true;
-      this.$router.replace({name: "home"});
-    },
-
-    logout() {
-      this.authenticated = false;
+  created: function () {
+    if (this.$store.getters.isAuthenticated) {
+      this.$store.dispatch(USER_REQUEST)
     }
   },
   components: {

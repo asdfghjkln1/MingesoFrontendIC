@@ -61,7 +61,6 @@
 
   export default {
     name: 'Scheduler',
-    props: [ "rol" ],
     data: function() {
       return {
         //
@@ -113,7 +112,7 @@
           onEventDeleted: function (args) {
             this.message("Event deleted: " + args.e.text());
           },
-          eventClickHandling: "Edit",
+          eventClickHandling: "ContextMenu",
           onEventEdited: function (args) {
             this.message("Event selected: " + args.e.text());
           },
@@ -123,7 +122,11 @@
             items: [
               {
                 text: "Cancelar reserva", onClick: function(args) {
-                  confirm("Seguro desea cancelar esta reserva?");
+                  let res = confirm("Seguro desea cancelar esta reserva?");
+                  if(!res){
+                    console.log("OK, cancelo");
+                    return false;
+                  }
                   //console.log(args.source.data);
                   this.cancelarReserva(args.source.data.id);
                   //var dp = args.source.calendar; dp.events.remove(args.source);
@@ -146,7 +149,7 @@
               args.data.barColor = "red";
             }else if(args.data.tipo_Reserva === "Particular"){
               args.data.barColor = "blue";
-            }else if(args.data.tipo_Reserva){
+            }else{
               args.data.BackgroundColor = "yellow";
             }
             args.data.bubbleHtml = "<div><b>Codigo reserva: " + args.data.codigo + "</b></div>" +
@@ -154,6 +157,7 @@
               "<div>Fecha realizado: " + args.data.fecha +"</div>" +
               "<div>Valor: " + args.data.total + "</div>";
             //"<router-link :to=\"{ name: 'reservas', params: { codigo_reserva: '" + args.data.codigo + "'}}\"> Ir a reserva </router-link>";
+            //args.data.attr("aria-")
           },
           rowHeaderColumns : [{
             title: "Habitación", //No funciona
@@ -175,12 +179,6 @@
       scheduler: function () {
         return this.$refs.scheduler.control;
       },
-      checkAdmin(){
-        let user = localStorage.getItem('usuario');
-        if(user){
-          return JSON.parse(user).rol === 'Admin';
-        } else return false;
-      }
     },
     methods: {
       nuevaReserva( reservas ){

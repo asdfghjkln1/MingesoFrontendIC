@@ -18,11 +18,14 @@
             <li class="nav-item">
               <router-link  class="nav-link" to="/habitaciones">Habitaciones</router-link>
             </li>
-            <li v-if="auth" class="nav-item"> <!-- No puedo actualizarlo -->
-              <p class="nav-link">{{ username }}</p>
+            <li v-if="isAuthenticated" class="nav-item">
+              <p class="nav-link">{{ profileName }}</p>
             </li>
-            <li v-if="auth" class="nav-item">
+            <li v-if="isAuthenticated" class="nav-item">
               <div id="logout-button" class="nav-link" v-on:click="logout">Salir</div>
+            </li>
+            <li v-if="!isAuthenticated" class="nav-item">
+              <router-link class="nav-link" to="/login">Ingresar</router-link>
             </li>
           </ul>
         </div>
@@ -32,56 +35,26 @@
 </template>
 
 <script>
+import { AUTH_LOGOUT } from "../store/actions/auth.consts.js";
+import { mapGetters, mapState} from "vuex";
+
 export default {
   name: 'Nav',
-  props: [ 'authenticated' ],
   data: function() {
     return {
     }
   },
   methods: {
     logout(){
-      localStorage.clear();
-      this.$emit('logout');
-      console.log("Logging out...");
-      this.$router.replace({name: "login"});
+      this.$store.dispatch(AUTH_LOGOUT).then(() => this.$router.push('/login'))
     },
   },
   computed: {
-    auth: {
-      get: function() {
-        console.log("auth computed: "+this.authenticated);
-        return this.authenticated;
-      },
-      set: function(value){
-        this.authenticated = value;
-      }
-    },
-    username: {
-      get: function() {
-        let user = localStorage.getItem('usuario');
-        if(user){
-          this.auth = true;
-          user = JSON.parse(user);
-          return user.nombre + " ( " + user.rol +" )";
-        }
-      },
-    }
-  },
-  /*mounted: function() {
-      let user = localStorage.getItem('usuario');
-      if(user){
-        this.auth = true;
-        user = JSON.parse(user);
-        this.user = user.user;
-        this.rol = user.rol;
-      }
-  },*/
-  /*watch: {
-    user(newUser) {
-      console.log(newUser);
-    }
-  }*/
+    ...mapGetters(['getProfile', 'isAuthenticated', 'isProfileLoaded', 'profileName']),
+    /*...mapState({
+      name: state => `${state.profile.username} (${state.profile.rol})`,
+    }),*/
+  }
 }
 </script>
 

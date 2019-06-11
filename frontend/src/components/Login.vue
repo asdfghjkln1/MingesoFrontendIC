@@ -4,11 +4,11 @@
     <form>
       <div class="form-group">
       <label for="user">Usuario</label>
-      <input id="user" class="form-control" type="text" name="user" v-model="username"/>
+      <input required id="user" class="form-control" type="text" name="user" v-model="username"/>
       </div>
       <div class="form-group">
         <label for="pass">Contraseña</label>
-        <input id="pass" class="form-control" type="password" name="pass" v-model="password"/>
+        <input required id="pass" class="form-control" type="password" name="pass" v-model="password"/>
       </div>
      <br/>
       <button class="btn btn-primary" type="button" v-on:click="login">Ingresar</button>
@@ -17,19 +17,7 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  //const url = 'http://localhost:8090/mingesoback';
-  const url = 'http://157.230.138.200:8090/mingesoback';
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json'
-  };
-  const axiosInst = axios.create({
-    baseURL: url,
-    timeout: 10000,
-    headers: headers
-  });
-
+  import {AUTH_REQUEST} from '../store/actions/auth.consts.js'
   export default {
     name: 'Login',
     data() {
@@ -40,34 +28,14 @@
     },
     methods: {
       login() {
-        if(this.username === '' || this.password === '') {
+        if (this.username === '' || this.password === '') {
           alert("Debe ingresar credenciales válidas");
           return false;
         }
-        axiosInst.get('usuarios').then(
-          response => {
-          if(response.status === 200){
-            for(let i = 0; i < response.data.length; i++){
-              if(response.data[i].usuario === this.username && response.data[i].password === this.password){
-                let user = {
-                  nombre: response.data[i].usuario,
-                  rol: response.data[i].rol
-                };
-                localStorage.setItem('usuario', JSON.stringify(user));
-                this.$emit("authenticated");
-                console.log("despues de login event");
-                return true;
-              }
-            }
-            alert("El usuario y/o la contraseña son incorrectos");
-            return false;
-          } else if(response.status !== 200){
-            console.log("ERROR INTERNO");
-          }
-        }).catch(error => {
-          console.log("Ha ocurrido un error");
-          console.log(error.toString())
-        });
+        const { username, password } = this;
+        this.$store.dispatch(AUTH_REQUEST, { username, password }).then(() => {
+          this.$router.push('/');
+        })
       },
     }
   }
