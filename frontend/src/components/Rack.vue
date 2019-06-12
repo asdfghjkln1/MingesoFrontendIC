@@ -12,10 +12,12 @@
           <input class="form-control" type="date" id="fin" v-on:change="DateChange">
         </div>
         <div class="col-lg-3 col-md-6">
+          <strong v-if="filtrando_por === 'codigo'">Filtrando por: {{ filtro_codigo }} </strong>
           <label for="filtro1">Filtro por código</label>
           <input id="filtro1" class="form-control" v-model="filtro_codigo" placeholder="Ingresar código de la reserva..." v-on:change="filtroCodigo">
         </div>
         <div class="col-lg-3 col-md-6">
+          <strong v-if="filtrando_por === 'nombre'">Filtrando por: {{ filtro_nombre }} </strong>
           <label for="filtro2">Filtro por nombre</label>
           <input id="filtro2" class="form-control" v-model="filtro_nombre" placeholder="Ingresar nombre del representante..." v-on:change="filtroNombre">
         </div>
@@ -77,6 +79,7 @@
         //Para filtros
         filtro_codigo: '',
         filtro_nombre: '',
+        filtrando_por: '',
         // Daypilot
         config: {
           locale: "es-es",
@@ -124,7 +127,7 @@
                 text: "Cancelar reserva", onClick: function(args) {
                   let res = confirm("Seguro desea cancelar esta reserva?");
                   if(!res){
-                    console.log("OK, cancelo");
+                    alert("Se ha cancelado la acción");
                     return false;
                   }
                   //console.log(args.source.data);
@@ -188,7 +191,7 @@
           axiosInst.post("reserva/insert", reservas[i]).then(
             response => {
               if(response.status === 200) {
-                alert("Insertado con éxito");
+                alert("Reserva registrada con éxito");
                 this.insertModalVisible = false;
                 this.loadEvents();
               }
@@ -202,7 +205,7 @@
       },
       filtroCodigo(){
         let self = this;
-        console.log("Filtrando por codigo: "+this.filtro_codigo);
+        this.filtrando_por = "codigo";
         axiosInst.get("/reservas/codigo/"+this.filtro_codigo).then(
           response => {
             if(response.status === 200){
@@ -215,8 +218,8 @@
         });
       },
       filtroNombre(){
-        console.log("Filtrando por nombre: "+this.filtro_nombre);
         let self = this;
+        this.filtrando_por = "nombre";
         axiosInst.get("/reservas/nombre/"+this.filtro_nombre).then(
           response => {
             if(response.status === 200){

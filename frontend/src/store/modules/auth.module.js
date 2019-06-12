@@ -9,6 +9,11 @@ const headers = {
   'Content-Type': 'application/json'
 };
 const axiosInst = axios.create({
+  baseURL: 'http://157.230.138.200:8090/mingesoback/',
+  timeout: 10000,
+  headers: headers
+});
+const axiosTest = axios.create({
   baseURL: 'http://localhost:3000/',
   timeout: 10000,
   headers: headers
@@ -53,29 +58,14 @@ const actions = {
             alert("El usuario y/o la contraseña son incorrectos");
             return false;
           } else if(response.status !== 200){
-            console.log("ERROR INTERNO");
+            console.log("Ha ocurrido un error en el servidor, por favor intente en otro momento...");
           }
         }).catch(error => {
-        console.log("Ha ocurrido un error");
+        console.log("Ha ocurrido un error en el servidor, por favor intente en otro momento...");
         commit(AUTH_ERROR, error)
         localStorage.removeItem('user-token')
         reject(error)
       });
-
-        /*.then(resp => {
-          localStorage.setItem('user-token', resp.token);
-          // Here set the header of your ajax library to the token value.
-          // example with axios
-          // axios.defaults.headers.common['Authorization'] = resp.token
-          commit(AUTH_SUCCESS, resp)
-          dispatch(USER_REQUEST)
-          resolve(resp)
-        })
-        .catch(err => {
-          commit(AUTH_ERROR, err)
-          localStorage.removeItem('user-token')
-          reject(err)
-        })*/
     })
   },
   [AUTH_LOGOUT]: ({commit, dispatch}) => {
