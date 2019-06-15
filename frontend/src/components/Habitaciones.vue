@@ -110,7 +110,6 @@ export default {
             axiosInst.get(url + '/habitaciones').then(
                 response => {
                     if(response.status = 200){
-                        console.log("Habitaciones obtenidas");
                         this.habitaciones=response.data;
                     }
                     else{
@@ -154,14 +153,10 @@ export default {
             this.tipoState = null
         },
         handleOk(bvModalEvt) {
-            // Prevent modal from closing
-            console.log(this.tipo);
-            console.log(this.opciones);
             axiosInst.put(url+'/habitacion/'+this.habitacionAux.id, this.tipo).then(
                 response => {
                     console.log(response);
                     if(response.status = 200){
-                        console.log("Habitacion actualizada");
                         this.getHabitaciones();
                     }
                 }
@@ -186,9 +181,31 @@ export default {
             this.$refs.modal.hide();
         },
         deleteHabitacion: async function(habitacion){
+            let yep = confirm("Seguro que desea eliminar la habitación "+ habitacion.number);
+            if(!yep){
+              return;
+            }
             await axiosInst.post(url + "/habitacion/" + habitacion.id);
-            this.getHabitaciones();
-        }
+            axiosInst.get(url + '/habitaciones').then(
+              response => {
+                if(response.status = 200){
+                  this.habitaciones=response.data;
+                  for(let i = 0; i < response.data.length; i ++){
+                    if(response.data[i].id === habitacion.id){
+                      alert("No puede eliminar una habitación con reservas asignadas!. Cancele las reservas e intente de nuevo.");
+                    }
+                  }
+                }
+                else{
+                  console.log("ERROR STATUS != 200");
+                }
+
+              }
+            ).catch(error => {
+              console.log("Ha ocurrido un error");
+              console.log(error.toString());
+            })
+        },
     }
 }
 

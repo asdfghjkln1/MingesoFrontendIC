@@ -20,10 +20,13 @@ const axiosTest = axios.create({
 });
 
 const token = localStorage.getItem('user-token')
+let loaded = false;
+console.log("este es el token " + token);
 if (token) {
-  axios.defaults.headers.common['Authorization'] = token
+  axios.defaults.headers.common['Authorization'] = token;
+  loaded = true;
 }
-const state = { token: token || '', status: '', hasLoadedOnce: false }
+const state = { token: token || '', status: '', hasLoadedOnce: loaded }
 
 const getters = {
   isAuthenticated: state => !!state.token,
@@ -34,7 +37,7 @@ const actions = {
   [AUTH_REQUEST]: ({commit, dispatch}, user) => {
     return new Promise((resolve, reject) => {
       commit(AUTH_REQUEST)
-      axiosInst.get('users').then(
+      axiosInst.get('usuarios').then(
         response => {
           if(response.status === 200){
             for(let i = 0; i < response.data.length; i++){
@@ -51,7 +54,6 @@ const actions = {
                 commit(AUTH_SUCCESS, response.data[i]);
                 dispatch(USER_REQUEST, response.data[i]);
                 resolve(response);
-                //this.$emit("authenticated");
                 return true;
               }
             }
