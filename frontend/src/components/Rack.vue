@@ -2,7 +2,7 @@
   <div id="Scheduler">
     <div class="component-container">
       <h2 id="rack-title">Rack de reservas</h2>
-      <div v-if="loading" class="spinner-border" role="status">
+      <div v-if="loading" class="spinner-border text-primary" role="status">
         <span class="sr-only">Cargando reservas...</span>
       </div>
       <div class="row">

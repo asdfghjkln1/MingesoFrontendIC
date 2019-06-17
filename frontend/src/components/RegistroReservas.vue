@@ -3,6 +3,9 @@
     <div class="container">
       <div class="row">
         <h2 id="titulo">Registro de reservas</h2>
+        <div v-if="loading" class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
       </div>
       <div class="row">
         <div class="col-lg-4 col-md-6 form-group">
@@ -65,16 +68,18 @@
         sortActual: '',
         sortDir: 'asc',
         filtro_nombre: '',
-        filtro_codigo: ''
+        filtro_codigo: '',
+        loading: false
       }
     },
     created() {
       this.fetchReservas();
     },
     methods: {
-      fetchReservas(){
+      async fetchReservas(){
         let self = this;
-        axiosInst.get('reservas').then(
+        this.loading = true;
+        await axiosInst.get('reservas').then(
           response => {
             if(response.status === 200){
               self.reservas = response.data; //._embedded.reservas;
@@ -86,6 +91,7 @@
           console.log("Ha ocurrido un error");
           console.log(error.toString())
         });
+        this.loading = false;
         //this.marcarCancelados();
       },
       sortRegistros(str){
@@ -99,13 +105,14 @@
         if(this.sortDir === 'desc') fact = -1;
         this.reservas.sort((a, b) => (a[str] > b[str]) ? 1 : (a[str] === b[str]) ? ((a[str] > b[str]) ? fact : -1*fact) : -1*fact );
       },
-      filtroCodigo(){
+      async filtroCodigo(){
         console.log("Filtrando por codigo: "+this.filtro_codigo);
         let url = "/reservas/codigo/";
         if(this.filtro_codigo === ''){
           url = "/reservas"
         }
-        axiosInst.get(url +this.filtro_codigo).then(
+        this.loading = true;
+        await axiosInst.get(url +this.filtro_codigo).then(
           response => {
             if(response.status === 200){
               this.reservas = response.data;
@@ -113,14 +120,16 @@
           }).catch( error => {
           console.log(error.toString());
         });
+        this.loading = false;
       },
-      filtroNombre(){
+      async filtroNombre(){
         console.log("Filtrando por nombre: " + this.filtro_nombre);
         let url = "/reservas/nombre/";
         if(this.filtro_nombre === ''){
           url = "/reservas"
         }
-        axiosInst.get(url + this.filtro_nombre).then(
+        this.loading = true;
+        await axiosInst.get(url + this.filtro_nombre).then(
           response => {
             if(response.status === 200){
               this.reservas = response.data;
@@ -129,6 +138,7 @@
           }).catch( error => {
           console.log(error.toString());
         });
+        this.loading = false;
       },
       /*marcarCancelados(){
         let elements = document.getElementsByClassName("status");
