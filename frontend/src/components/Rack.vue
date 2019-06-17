@@ -2,6 +2,9 @@
   <div id="Scheduler">
     <div class="component-container">
       <h2 id="rack-title">Rack de reservas</h2>
+      <div v-if="loading" class="spinner-border" role="status">
+        <span class="sr-only">Cargando reservas...</span>
+      </div>
       <div class="row">
         <div class=" offset-lg-1 offset-md-2 form-group col-lg-2 col-md-4">
           <label for="inicio">Inicio Rack</label>
@@ -81,6 +84,7 @@
       return {
         //
         insertModalVisible: false,
+        loading: false,
         selectedRange: [],
         resources : [],
         habitaciones: [], //Para comparar
@@ -319,7 +323,7 @@
         }
         const timeDiff = Math.abs(Date.parse(inicio) - Date.parse(fin));
         const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
-        alert("Dias: " + days);
+        alert("Número de dias seleccionados: " + days);
         this.config.days = days + 1;
         this.config.startDate = inicio;
         /*let todos = this.events;
@@ -396,9 +400,10 @@
         }
         this.events = events;
       },
-      loadEvents(){
+      async loadEvents(){
         var self = this;
-        axiosInst.get('reservas').then(
+        this.loading = true;
+        await axiosInst.get('reservas').then(
           response => {
             if(response.status === 200){
               self.reservas = response.data;
@@ -412,9 +417,11 @@
           console.log("Ha ocurrido un error en loadEvents");
           console.log(JSON.stringify(error))
         });
+        this.loading = false;
       },
       loadPrecios(){
         var self = this;
+        this.loading = true;
         axiosInst.get('tipos').then(
           response => {
             if(response.status === 200){
