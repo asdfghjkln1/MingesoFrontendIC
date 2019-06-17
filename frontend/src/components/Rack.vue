@@ -12,14 +12,14 @@
           <input class="form-control" type="date" id="fin" v-on:change="DateChange">
         </div>
         <div class="col-lg-3 col-md-6">
-          <strong v-if="filtrando_por === 'codigo'">Filtrando por: {{ filtro_codigo }} </strong>
           <label for="filtro1">Filtro por código</label>
           <input id="filtro1" class="form-control" v-model="filtro_codigo" placeholder="Ingresar código de la reserva..." v-on:change="filtroCodigo">
+          <strong v-if="filtrando_por === 'codigo'" style="display: block"> {{ filtro }} </strong>
         </div>
         <div class="col-lg-3 col-md-6">
-          <strong v-if="filtrando_por === 'nombre'">Filtrando por: {{ filtro_nombre }} </strong>
           <label for="filtro2">Filtro por nombre</label>
           <input id="filtro2" class="form-control" v-model="filtro_nombre" placeholder="Ingresar nombre del representante..." v-on:change="filtroNombre">
+          <strong v-if="filtrando_por === 'nombre'" style="display: block"> {{ filtro }} </strong>
         </div>
       </div>
       <div class="scheduler-container row">
@@ -30,6 +30,19 @@
       <div class="row">
         <div class="col-lg-8 col-md-10">
           <TablaPrecios :precios="precios" v-on:editarTipo="editTipo" v-on:eliminarTipo="deleteTipo" v-on:nuevoTipo="newTipo"></TablaPrecios>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="card">
+            <div class="card-header">Instrucciones de uso para el Rack de reservas</div>
+            <div class="card-body">
+              <ul id="help">
+                <li>Puede seleccionar un período de tiempo para una reserva realizando un click izquierdo y arrastrándolo</li>
+                <li>Para seleccionar múltiples reservas, mantenga presionado la tecla "ctrl" para soltar el cursor sin perder la selección</li>
+                <li>El tipo de reserva es un campo opcional y puede dejarlo en blanco</li>
+                <li>Para eliminar una reserva, presione click derecho y seleccione "cancelar reserva"</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -48,6 +61,7 @@
     'Content-Type': 'application/json'
   };
   const url = 'http://157.230.138.200:8090/mingesoback/';
+  //const url = 'http://localhost:3000';
 
   const axiosInst = axios.create({
     baseURL: url,
@@ -80,6 +94,7 @@
         filtro_codigo: '',
         filtro_nombre: '',
         filtrando_por: '',
+        filtro: '',
         // Daypilot
         config: {
           locale: "es-es",
@@ -97,11 +112,12 @@
           timeRangeSelectedHandling: "Enabled",
           allowMultiRange: true,
           onTimeRangeSelected: function (args) {
-            console.log(args);
             //Cargar datos al modal
+            //var dp = this;
             this.selectedRange = args.multirange;
             //Abrir modal
             this.showModal();
+            this.scheduler.clearSelection();
           }.bind(this),
           eventMoveHandling: "Update",
           onEventMoved: function (args) {
@@ -197,7 +213,7 @@
               }
             }).catch( error => {
               console.log("Error insertar Num " + i);
-              console.log(error.toString());
+              console.log(error);
             }
           );
         }
@@ -205,6 +221,7 @@
       },
       filtroCodigo(){
         let self = this;
+        this.filtro = 'Filtrando por: ' + this.filtro_codigo;
         this.filtrando_por = "codigo";
         axiosInst.get("/reservas/codigo/"+this.filtro_codigo).then(
           response => {
@@ -214,11 +231,12 @@
               self.scheduler.update({ events : self.events});
             }
         }).catch( error => {
-          console.log(error.toString());
+          console.log(JSON.stringify(error));
         });
       },
       filtroNombre(){
         let self = this;
+        this.filtro = 'Filtrando por: ' + this.filtro_nombre;
         this.filtrando_por = "nombre";
         axiosInst.get("/reservas/nombre/"+this.filtro_nombre).then(
           response => {
@@ -228,7 +246,7 @@
               this.scheduler.update({ events : self.events});
             }
           }).catch( error => {
-          console.log(error.toString());
+          console.log(JSON.stringify(error));
         });
       },
       editTipo( tipo ){
@@ -241,7 +259,7 @@
             }
           }
         ).catch( error => {
-          console.log(error.toString());
+          console.log(JSON.stringif(error);
         });*/
       },
       newTipo( tipo ){
@@ -253,7 +271,7 @@
             }
           }
         ).catch( error => {
-          console.log(error.toString());
+          console.log(JSON.stringify(error));
         });
       },
       deleteTipo( index ){
@@ -266,7 +284,7 @@
             }
           }
         ).catch( error => {
-          console.log(error.toString());
+          console.log(JSON.stringify(error));
         });
       },
       cancelarReserva(index){
@@ -278,13 +296,15 @@
             }
           }
         ).catch( error => {
-          console.log(error.toString());
+          console.log(JSON.stringify(error));
         });
       },
       showModal() {
         this.insertModalVisible = true;
       },
       closeModal() {
+        this.selectedRange = [];
+        //this.habitaciones = [];
         this.insertModalVisible = false;
       },
       DateChange() {
@@ -337,7 +357,7 @@
             }
           }).catch(error => {
           console.log("Ha ocurrido un error");
-          console.log(error.toString())
+          console.log(JSON.stringify(error))
         });
       },
       parseRooms( habitaciones ) {
@@ -390,7 +410,7 @@
             }
           }).catch(error => {
           console.log("Ha ocurrido un error en loadEvents");
-          console.log(error.toString())
+          console.log(JSON.stringify(error))
         });
       },
       loadPrecios(){
@@ -405,7 +425,7 @@
             }
           }).catch(error => {
           console.log("Ha ocurrido un error en loadPrecios");
-          console.log(error.toString())
+          console.log(error)
         });
       }
     },
@@ -430,5 +450,13 @@
   }
   .scheduler-container{
     margin: 20px;
+  }
+
+  #help {
+    padding: 10px;
+  }
+
+  #help li{
+    text-align: left;
   }
 </style>

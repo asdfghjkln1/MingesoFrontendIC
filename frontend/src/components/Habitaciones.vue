@@ -139,7 +139,6 @@ export default {
             })
         },
         showModal(habitacion){
-            console.log("It's work!!!");
             this.habitacionAux = habitacion;
 
         },

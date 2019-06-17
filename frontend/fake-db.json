@@ -35,17 +35,17 @@
     { "id": 5, "codigo": "A", "text": "Jorgito", "start": "2019-05-12", "end": "2019-05-13", "tipo": "Empresa", "resource": 2, "fecha": "2019-05-07", "status" : "Cancelado", "total": 15000}
   ],
 
-  "users" : [
+  "usuarios" : [
     { "id": 1, "username": "Vicente", "password": "pass", "rol" : "Admin", "token": "1247asd78d"},
     { "id": 2, "username": "Sebastian", "password": "pass", "rol" : "Manager", "token": "qwequwd8d"},
     { "id": 3, "username": "Francisco", "password": "pass", "rol" : "Manager", "token": "asd2dj98d"}
   ],
 
   "precios" : [
-    { "id": 1, "tipo": "Simple", "precio" : 30000},
-    { "id": 2, "tipo": "Doble", "precio" : 38000},
-    { "id": 3, "tipo": "Triple", "precio" : 48000},
-    { "id": 4, "tipo": "Familiar", "precio" : 60000},
-    { "id": 5, "tipo": "Suite", "precio" : 100000}
+    { "id": 1, "tipo": "Simple", "valor" : 30000},
+    { "id": 2, "tipo": "Doble", "valor" : 38000},
+    { "id": 3, "tipo": "Triple", "valor" : 48000},
+    { "id": 4, "tipo": "Familiar", "valor" : 60000},
+    { "id": 5, "tipo": "Suite", "valor" : 100000}
   ]
 }

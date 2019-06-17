@@ -20,16 +20,15 @@ const axiosTest = axios.create({
 });
 
 const token = localStorage.getItem('user-token')
-let loaded = false;
-console.log("este es el token " + token);
+let loaded = false
 if (token) {
-  axios.defaults.headers.common['Authorization'] = token;
-  loaded = true;
+  axios.defaults.headers.common['Authorization'] = token
+  loaded = true
 }
 const state = { token: token || '', status: '', hasLoadedOnce: loaded }
 
 const getters = {
-  isAuthenticated: state => !!state.token,
+  isAuthenticated: state => !!state.token || state.hasLoadedOnce,
   authStatus: state => state.status,
 }
 
@@ -37,23 +36,25 @@ const actions = {
   [AUTH_REQUEST]: ({commit, dispatch}, user) => {
     return new Promise((resolve, reject) => {
       commit(AUTH_REQUEST)
+      commit(AUTH_LOGOUT)
       axiosInst.get('usuarios').then(
         response => {
           if(response.status === 200){
             for(let i = 0; i < response.data.length; i++){
-              if(response.data[i].username === user.username && response.data[i].password === user.password){
+              if(response.data[i].usuario === user.username && response.data[i].password === user.password){
                 /*let user = {
                   nombre: response.data[i].usuario,
                   rol: response.data[i].rol
                 };*/
                 //localStorage.setItem('usuario', JSON.stringify(user));
-                let token = response.data[i].token;
+                let token = response.data[i].token || 'testtoken';
                 localStorage.setItem('user-token', token);
                 console.log("token: "+token);
                 axios.defaults.headers.common['Authorization'] = token;
                 commit(AUTH_SUCCESS, response.data[i]);
                 dispatch(USER_REQUEST, response.data[i]);
                 resolve(response);
+                //this.$emit("authenticated");
                 return true;
               }
             }
@@ -95,6 +96,7 @@ const mutations = {
   },
   [AUTH_LOGOUT]: (state) => {
     state.token = ''
+    state.hasLoadedOnce = false
   }
 }
 

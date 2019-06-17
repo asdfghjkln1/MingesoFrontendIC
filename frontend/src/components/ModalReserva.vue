@@ -18,6 +18,7 @@
             <div class="form-group">
               <label>Nombre del representante</label>
               <input class="form-control" v-model="name" id="name">
+              <small style="display:block; color:red;">{{ ayudaNombre }}</small>
               <label>Tipo de reserva (Particular, Empresa)</label>
               <input class="form-control" v-model="tipo" id="tipo">
               <div class="row">
@@ -28,13 +29,15 @@
                   <input class="form-control" v-model="selection.end" disabled>
                   <label>* {{ dias[index] }} dia(s)/noche(s)</label><br/>
                   <label> Valor unitario </label>
-                  <input name="precio" class="form-control" v-once v-bind:value="preciosPorDia[index]" v-on:change="updatePrecio">
+                  <input @keypress="isNumber($event)" name="precio" class="form-control" v-bind:value="preciosPorDia[index]" v-on:change="updatePrecio">
+                  <small name="errorHelp" style="display:block; color:red;"></small>
                   <label>Valor de la reserva</label>
                   <input name="subtotal" class="form-control" v-bind:value="subtotales[index]" disabled>
                 </div>
               </div>
             </div>
             <h5> Precio total: $<span id="total">{{ setPrecios }}</span></h5>
+            <small style="display:block; color:red;">{{ ayudaTotal }}</small>
           </div>
         </section>
         <footer class="modal-footer-custom">
@@ -57,16 +60,28 @@
       return {
         name: '',
         tipo: '',
+        ayudaNombre: '',
+        ayudaTotal: '',
         preciosPorDia: [],
         subtotales: [],
         total: 0,
-        dias: []
+        dias: [],
       }
     },
     methods: {
+      isNumber: function(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if ((charCode > 31 && (charCode < 48 || charCode > 57))) {
+          evt.preventDefault();
+          return false;
+        } else {
+          return true;
+        }
+      },
       generarCodigo( largo ) {
         var result = 'R-';
-        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         var charactersLength = characters.length;
         for (let i = 0; i < largo; i++ ) {
           result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -74,8 +89,19 @@
         return result;
       },
       confirm() {
-        if(this.name === '' || this.tipo === ''){
-          return false;
+        this.ayudaNombre = '';
+        this.ayudaTotal = '';
+        let yes = confirm("Esta seguro de efectuar la(s) reserva(s)?");
+        if(!yes){
+          return;
+        }
+        if(this.name === ''){
+          this.ayudaNombre = '* Ingrese el nombre del reservante';
+          return;
+        }
+        if(document.getElementById("total").innerHTML === ''){
+          this.ayudaTotal = '* Por favor corrija los campos de precio erroneos';
+          return;
         }
         let codigo_reserva = this.generarCodigo(6);
         let reservas = [];
@@ -88,7 +114,7 @@
             habitacion: {
               id : this.selected[i].resource
             },
-            tipo_Reserva: this.selected[i].tipo,
+            tipo_Reserva: this.selected[i].tipo || '',
             fecha_reserva: new Date().toJSON().slice(0,10) + " 00:00:00.000000",
             valor: this.subtotales[i],
             valor_final: 1
@@ -107,9 +133,19 @@
       },
       updatePrecio(){
         let precios = document.getElementsByName("precio");
+        let errors = document.getElementsByName("errorHelp");
+        for(var x = 0; x < errors.length; x++){
+          errors[x].innerHTML = ''
+        }
         this.subtotales = [];
         let total = 0;
         for(let i = 0; i < precios.length; i++){
+          if(isNaN(parseInt(precios[i].value))){
+            console.log("oops " + i);
+            errors[i].innerHTML = "* Ingrese un número positivo";
+            document.getElementById("total").innerHTML = '';
+          }
+          return;
           let subtotal = parseInt(precios[i].value) * this.dias[i];
           this.subtotales.push(subtotal);
           total += subtotal;
