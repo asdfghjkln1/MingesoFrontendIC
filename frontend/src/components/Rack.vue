@@ -36,7 +36,7 @@
         </div>
         <div class="col-lg-4 col-md-6">
           <div class="card">
-            <div class="card-header">Instrucciones de uso para el Rack de reservas</div>
+            <h3 class="card-header">Instrucciones de uso para el Rack de reservas</h3>
             <div class="card-body">
               <ul id="help">
                 <li>Puede seleccionar un período de tiempo para una reserva realizando un click izquierdo y arrastrándolo</li>

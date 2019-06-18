@@ -4,7 +4,7 @@
       <div class="row">
         <h2 id="titulo">Registro de reservas</h2>
         <div v-if="loading" class="spinner-border text-primary" role="status">
-          <span class="sr-only">Loading...</span>
+          <span class="sr-only">Cargando...</span>
         </div>
       </div>
       <div class="row">
