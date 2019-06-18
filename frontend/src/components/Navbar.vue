@@ -56,6 +56,9 @@ export default {
         this.className += " active";
       });
     }
+    if(this.isProfileLoaded){
+      this.$router.push("/");
+    }
   },
   methods: {
     logout(){
