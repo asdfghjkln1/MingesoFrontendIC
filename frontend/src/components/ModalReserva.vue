@@ -16,7 +16,7 @@
         <section class="modal-body-custom" id="modalDescription">
           <div name="body">
             <div class="form-group">
-              <label>Nombre del representante</label>
+              <label>Nombre del representante <small style="color: red">*</small></label>
               <input class="form-control" v-model="name" id="name">
               <small style="display:block; color:red;">{{ ayudaNombre }}</small>
               <label>Tipo de reserva (Particular, Empresa)</label>
@@ -27,9 +27,9 @@
                   <input class="form-control" v-model="selection.start" disabled>
                   <label>Fecha fin</label>
                   <input class="form-control" v-model="selection.end" disabled>
-                  <label>* {{ dias[index] }} dia(s)/noche(s)</label><br/>
+                  <label>* {{ dias[index] }} dia(s)</label><br/>
                   <label> Valor unitario </label>
-                  <input @keypress="isNumber($event)" name="precio" class="form-control" v-bind:value="preciosPorDia[index]" v-on:change="updatePrecio">
+                  <input name="precio" class="form-control" v-bind:value="preciosPorDia[index]" v-on:change="updatePrecio">
                   <small name="errorHelp" style="display:block; color:red;"></small>
                   <label>Valor de la reserva</label>
                   <input name="subtotal" class="form-control" v-bind:value="subtotales[index]" disabled>
@@ -69,7 +69,7 @@
       }
     },
     methods: {
-      isNumber: function(evt) {
+      /*isNumber: function(evt) {
         evt = (evt) ? evt : window.event;
         var charCode = (evt.which) ? evt.which : evt.keyCode;
         if ((charCode > 31 && (charCode < 48 || charCode > 57))) {
@@ -78,7 +78,7 @@
         } else {
           return true;
         }
-      },
+      },*/
       generarCodigo( largo ) {
         var result = 'R-';
         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -144,8 +144,8 @@
             console.log("oops " + i);
             errors[i].innerHTML = "* Ingrese un número positivo";
             document.getElementById("total").innerHTML = '';
+            return;
           }
-          return;
           let subtotal = parseInt(precios[i].value) * this.dias[i];
           this.subtotales.push(subtotal);
           total += subtotal;

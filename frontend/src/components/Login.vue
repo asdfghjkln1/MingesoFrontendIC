@@ -23,7 +23,7 @@
     data() {
       return {
         username: "",
-        password: ""
+        password: "",
       }
     },
     methods: {
@@ -32,8 +32,12 @@
           alert("Debe ingresar credenciales válidas");
           return false;
         }
-        const { username, password } = this;
-        this.$store.dispatch(AUTH_REQUEST, { username, password }).then(() => {
+        const user = {
+          usuario: this.username,
+          password: this.password,
+          rol: "administrador"
+        };
+        this.$store.dispatch(AUTH_REQUEST, user).then(() => {
           this.$router.push('/');
         })
       },

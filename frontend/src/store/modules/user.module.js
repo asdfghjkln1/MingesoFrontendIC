@@ -9,7 +9,7 @@ const headers = {
 };
 const axiosInst = axios.create({
   baseURL: 'http://157.230.138.200:8090/mingesoback/',
-  timeout: 10000,
+  timeout: 30000,
   headers: headers
 });
 

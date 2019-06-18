@@ -11,23 +11,25 @@
         <div class="col-lg-4 col-md-6 form-group">
           <label>Filtro por código</label>
           <input id="filtro-codigo" class="form-control" v-model="filtro_codigo" placeholder="Ingresar código de la reserva..." v-on:change="filtroCodigo">
+          <strong v-if="filtrando_por === 'codigo'" style="display: block"> {{ filtro }} </strong>
         </div>
         <div class="col-lg-4 col-md-6 form-group">
           <label>Filtro por nombre</label>
           <input id="filtro-nombre" class="form-control" v-model="filtro_nombre" placeholder="Ingresar nombre del representante..." v-on:change="filtroNombre">
+          <strong v-if="filtrando_por === 'nombre'" style="display: block"> {{ filtro }} </strong>
         </div>
       </div>
-      <div class="row">
+      <div class="row table-responsive">
         <table class="table table-striped table-stripped">
           <tr>
-            <th><div href="#" v-on:click="sortRegistros('id')" class="sort-by">ID reserva</div></th>
-            <th><div href="#" v-on:click="sortRegistros('codigo')" class="sort-by">Código Reserva</div></th>
-            <th><div href="#" v-on:click="sortRegistros('text')" class="sort-by">Nombre</div></th>
-            <th><div href="#" v-on:click="sortRegistros('start')" class="sort-by">Fecha inicio</div></th>
-            <th><div href="#" v-on:click="sortRegistros('end')" class="sort-by">Fecha fin</div></th>
-            <th><div href="#" v-on:click="sortRegistros('tipo')" class="sort-by">Tipo reserva</div></th>
-            <th><div href="#" v-on:click="sortRegistros('fecha')" class="sort-by">Fecha realizado</div></th>
-            <th><div href="#" v-on:click="sortRegistros('total')" class="sort-by">Total</div></th>
+            <th><div class="sort-by">ID Reserva <i href="#" v-on:click="sortRegistros('id')" class="fas fa-sort"></i></div></th>
+            <th><div class="sort-by">Código Reserva <i  href="#" v-on:click="sortRegistros('codigo')" class="fas fa-sort"></i></div></th>
+            <th><div class="sort-by">Nombre Representante <i  href="#" v-on:click="sortRegistros('nombre')" class="fas fa-sort"></i></div></th>
+            <th><div class="sort-by">Fecha inicio <i  href="#" v-on:click="sortRegistros('start')" class="fas fa-sort"></i></div></th>
+            <th><div class="sort-by">Fecha fin <i href="#" v-on:click="sortRegistros('end')" class="fas fa-sort"></i></div></th>
+            <th><div class="sort-by">Tipo Reserva <i href="#" v-on:click="sortRegistros('tipo')" class="fas fa-sort"></i></div></th>
+            <th><div class="sort-by">Fecha Realizado <i href="#" v-on:click="sortRegistros('fecha')" class="fas fa-sort"></i></div></th>
+            <th><div class="sort-by">Total <i href="#" v-on:click="sortRegistros('total')" class="fas fa-sort"></i></div></th>
           </tr>
           <tbody>
           <tr v-for="reserva in reservas">
@@ -69,6 +71,8 @@
         sortDir: 'asc',
         filtro_nombre: '',
         filtro_codigo: '',
+        filtro: '',
+        filtrando_por: '',
         loading: false
       }
     },
@@ -106,7 +110,8 @@
         this.reservas.sort((a, b) => (a[str] > b[str]) ? 1 : (a[str] === b[str]) ? ((a[str] > b[str]) ? fact : -1*fact) : -1*fact );
       },
       async filtroCodigo(){
-        console.log("Filtrando por codigo: "+this.filtro_codigo);
+        this.filtro = "Filtrando por: " + this.filtro_codigo;
+        this.filtrando_por = 'codigo';
         let url = "/reservas/codigo/";
         if(this.filtro_codigo === ''){
           url = "/reservas"
@@ -123,7 +128,8 @@
         this.loading = false;
       },
       async filtroNombre(){
-        console.log("Filtrando por nombre: " + this.filtro_nombre);
+        this.filtro = 'Filtrando por: ' + this.filtro_nombre;
+        this.filtrando_por = 'nombre';
         let url = "/reservas/nombre/";
         if(this.filtro_nombre === ''){
           url = "/reservas"
@@ -169,7 +175,6 @@
   sort-by:after {
     border: 4px solid transparent;
     content: "";
-    display: block;
     height: 0;
     right: 5px;
     top: 50%;
@@ -183,6 +188,10 @@
   sort-by:after {
     border-top-color: #666;
     margin-top: 1px;
+  }
+
+  fas.fa-sort{
+    cursor: pointer;
   }
 
 </style>

@@ -1,14 +1,19 @@
 config:
   target: 'http://157.230.138.200:8090/mingesoback'
+  payload:
+    path: "./usuarios.csv"
+    fields:
+    - "usuario"
+    - "password"
   ensure:
     - median: 60000
-    - p95: 120000
     - maxErrorRate: 10
   phases:
-  - duration: 20
+  - duration: 60
     arrivalRate: 5
-  - duration: 10
+  - duration: 60
     arrivalRate: 5
+    rampTo: 20
   environments:
     lowload:
       phases:
@@ -25,15 +30,20 @@ config:
         rampTo: 50
   defaults:
     headers:
-      x-my-service-auth: '987401838271002188298567'
+      Content-Type: 'application/json'
 scenarios:
   - flow:
-      - get:
-          url: "/reservas"
-          weight: 5
+      - post:
+          url: "/usuario/login"
+          json:
+            usuario: "{{ usuario }}"
+            password: "{{ contraseña }}"
       - get:
           url: "/habitaciones"
-          weight: 3
+      - get:
+          url: "/reservas"
+      - think: 5
+      - get:
+          url: "/reservas/codigo/A"
       - get:
           url: "/tipos"
-          weight: 1
