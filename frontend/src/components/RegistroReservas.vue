@@ -20,23 +20,25 @@
         </div>
       </div>
       <div class="row table-responsive">
-        <table class="table table-striped table-stripped">
+        <table class="table table-bordered table-striped table-highlight">
+          <thead style="background-color: white">
           <tr>
-            <th><div class="sort-by">ID Reserva <i href="#" v-on:click="sortRegistros('id')" class="fas fa-sort"></i></div></th>
+            <!--<th><div class="sort-by">ID Reserva <i href="#" v-on:click="sortRegistros('id')" class="fas fa-sort"></i></div></th>-->
             <th><div class="sort-by">Código Reserva <i  href="#" v-on:click="sortRegistros('codigo')" class="fas fa-sort"></i></div></th>
             <th><div class="sort-by">Nombre Representante <i  href="#" v-on:click="sortRegistros('nombre')" class="fas fa-sort"></i></div></th>
-            <th><div class="sort-by">Fecha inicio <i  href="#" v-on:click="sortRegistros('start')" class="fas fa-sort"></i></div></th>
-            <th><div class="sort-by">Fecha fin <i href="#" v-on:click="sortRegistros('end')" class="fas fa-sort"></i></div></th>
+            <th><div class="sort-by">Fecha inicio <i  href="#" v-on:click="sortRegistros('inicio')" class="fas fa-sort"></i></div></th>
+            <th><div class="sort-by">Fecha fin <i href="#" v-on:click="sortRegistros('fin')" class="fas fa-sort"></i></div></th>
             <th><div class="sort-by">Tipo Reserva <i href="#" v-on:click="sortRegistros('tipo')" class="fas fa-sort"></i></div></th>
             <th><div class="sort-by">Fecha Realizado <i href="#" v-on:click="sortRegistros('fecha')" class="fas fa-sort"></i></div></th>
-            <th><div class="sort-by">Total <i href="#" v-on:click="sortRegistros('total')" class="fas fa-sort"></i></div></th>
+            <th><div class="sort-by">Total <i href="#" v-on:click="sortRegistros('valor')" class="fas fa-sort"></i></div></th>
           </tr>
+          </thead>
           <tbody>
           <tr v-for="reserva in reservas">
-            <td>{{reserva.id}}</td>
+            <!--<td>{{reserva.id}}</td>-->
             <td>{{reserva.codigo}}</td>
-            <td>{{reserva.nombre}}</td> <!--Cambiar por reserva.nombre-->
-            <td>{{reserva.inicio.substring(0, 10)}}</td> <!--Cambiar por reserva.inicio/fin-->
+            <td>{{reserva.nombre}}</td>
+            <td>{{reserva.inicio.substring(0, 10)}}</td>
             <td>{{reserva.fin.substring(0, 10)}}</td>
             <td>{{reserva.tipo_Reserva}}</td>
             <td>{{reserva.fecha_reserva.substring(0, 10)}}</td>

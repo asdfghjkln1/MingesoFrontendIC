@@ -118,9 +118,9 @@
           onTimeRangeSelected: function (args) {
             //Cargar datos al modal
             //var dp = this;
-            this.selectedRange = args.multirange;
+            //this.selectedRange = args.multirange;
             //Abrir modal
-            this.showModal();
+            this.showModal( args.multirange );
             this.scheduler.clearSelection();
           }.bind(this),
           eventMoveHandling: "Update",
@@ -129,15 +129,15 @@
           },
           eventResizeHandling: "Update",
           onEventResized: function (args) {
-            this.message("Event resized: " + args.e.text());
+            this.message("Reserva editada: " + args.e.text());
           },
-          eventDeleteHandling: "Update",
+          //eventDeleteHandling: "Update",
           onEventDeleted: function (args) {
-            this.message("Event deleted: " + args.e.text());
+            this.message("Reserva eliminada: " + args.e.text());
           },
           eventClickHandling: "ContextMenu",
           onEventEdited: function (args) {
-            this.message("Event selected: " + args.e.text());
+            this.message("Reserva editada: " + args.e.text());
           },
           eventHoverHandling: "Bubble",
           bubble: new DayPilot.Bubble(),
@@ -157,11 +157,12 @@
               },
               /*{text:"Edit", onClick: function(args) {
                   var dp = args.source.calendar; dp.events.edit(this.source); } },*/
-              {
+              /*{
                 text: "Ir a reserva", onClick: function( args ) {
                   this.$router.push("/reservas/" + args.source.data.codigo);
                 }.bind(this)
-              }]
+              }*/
+              ]
           }),
           treeEnabled: false,
           rowHeaderWidth: 120,
@@ -211,7 +212,6 @@
           axiosInst.post("reserva/insert", reservas[i]).then(
             response => {
               if(response.status === 200) {
-                alert("Reserva registrada con éxito");
                 this.insertModalVisible = false;
                 this.loadEvents();
               }
@@ -221,7 +221,7 @@
             }
           );
         }
-
+        alert("Reserva(s) registrada(s) con éxito");
       },
       filtroCodigo(){
         let self = this;
@@ -303,12 +303,13 @@
           console.log(JSON.stringify(error));
         });
       },
-      showModal() {
+      showModal( range ) {
+        this.selectedRange = range;
         this.insertModalVisible = true;
+        console.log(this.selectedRange)
       },
       closeModal() {
         this.selectedRange = [];
-        //this.habitaciones = [];
         this.insertModalVisible = false;
       },
       DateChange() {
@@ -366,7 +367,6 @@
       },
       parseRooms( habitaciones ) {
         let resources = [];
-        //let pisos = [];
         for(let i = 0; i < habitaciones.length; i++){
           let resource = {
             id: habitaciones[i].id,

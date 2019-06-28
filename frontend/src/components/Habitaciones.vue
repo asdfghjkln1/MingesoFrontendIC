@@ -1,26 +1,25 @@
 <template>
     <div id="habitaciones-edit" class="habitaciones-container">
-        <div class="row">
-            <table class="table table-striped">
-                <tr>
-                    <th><h1 class="titulo">Editor de habitaciones</h1></th>
-                    <b-button variant="outline-primary" style="margin: 12% -470% 0 0;" v-b-modal.modal-new-habitacion v-if="isAdmin">Agregar</b-button>
-                </tr>
-                <tbody>
+      <div class="row" style="margin-bottom: 5%">
+      <h1 class="titulo">Editor de habitaciones</h1>
+      <b-button variant="outline-primary" style="display: inline-block; margin-left: 50%" v-b-modal.modal-new-habitacion v-if="isAdmin">Agregar habitación</b-button>
+      </div>
+        <div class="row table-responsive">
+            <table class="table table-bordered table-striped table-highlight">
+              <thead  style="background-color: white">
                     <tr>
-                        <td colspan="1"> Id de habitación </td>
-                        <td colspan="1"> Numero</td>
-                        <td colspan="1"> Tipo </td>
-                        <td colspan="1" v-if="isAdmin"> </td>
-                        <td colspan="1" v-if="isAdmin"> </td>
+                        <td colspan="1"><strong>Id de habitación</strong> </td>
+                        <td colspan="1"><strong> Numero</strong></td>
+                        <td colspan="1"><strong>Tipo</strong> </td>
+                        <td colspan="1" v-if="isAdmin"><strong>Acciones</strong></td>
                     </tr>
+              </thead>
+              <tbody>
                     <tr v-for="habitacion in habitaciones">
-                        
                         <td colspan="1"> {{habitacion.id}} </td>
                         <td colspan="1">{{habitacion.number}}</td>
                         <td colspan="1">{{habitacion.tipo.tipo}} </td>
-                        <td v-if="isProfileLoaded"><b-button v-if="isAdmin" variant="outline-primary" v-b-modal.modal-edit-habitacion @click="showModal(habitacion)">Editar</b-button></td>
-                        <td v-if="isProfileLoaded"><b-button v-if="isAdmin" variant="outline-danger" @click="deleteHabitacion(habitacion)">Eliminar</b-button></td>
+                        <td v-if="isProfileLoaded"><b-button v-if="isAdmin" variant="outline-primary" v-b-modal.modal-edit-habitacion @click="showModal(habitacion)">Editar</b-button> <b-button v-if="isAdmin" variant="outline-danger" @click="deleteHabitacion(habitacion)">Eliminar</b-button></td>
                     </tr>
                 </tbody>
             </table>
@@ -212,10 +211,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #titulo{
-    padding: 10px 5px 5px 30px;
+  .titulo{
+    padding: 10px 5px 5px 15px;
+    float: left;
+    overflow: hidden;
+    white-space: nowrap;
   }
-  .container{
+  .habitaciones-container{
     padding: 50px;
   }
 

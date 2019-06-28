@@ -87,12 +87,13 @@
       activate(index){
         let fields = document.getElementsByName("tipos");
         let field = fields[index];
-        if(!this.disabled[index]){
+        if(this.disabled[index]){
           field.setAttribute("disabled", "true");
+          this.disabled[index] = false;
         } else {
           field.removeAttribute("disabled");
+          this.disabled[index] = true;
         }
-        this.disabled[index] = !this.disabled[index];
       },
       nuevoTipo(){
         let yes = confirm("Seguro desea agregar este tipo de habitación?");

@@ -29,21 +29,21 @@
                   <input class="form-control" v-model="selection.end" disabled>
                   <label>* {{ dias[index] }} dia(s)</label><br/>
                   <label> Valor unitario </label>
-                  <input name="precio" class="form-control" v-bind:value="preciosPorDia[index]" v-on:change="updatePrecio">
+                  <input name="precio" class="form-control" v-model="preciosPorDia[index]" v-on:change="updatePrecio">
                   <small name="errorHelp" style="display:block; color:red;"></small>
                   <label>Valor de la reserva</label>
                   <input name="subtotal" class="form-control" v-bind:value="subtotales[index]" disabled>
                 </div>
               </div>
             </div>
-            <h5> Precio total: $<span id="total">{{ setPrecios }}</span></h5>
+            <h5> Precio total: $<span id="total">{{ total }}</span></h5>
             <small style="display:block; color:red;">{{ ayudaTotal }}</small>
           </div>
         </section>
         <footer class="modal-footer-custom">
           <div name="footer">
-            <button type="button" class="btn-green" @click="confirm" aria-label="Confirmar"> Confirmar </button>
-            <button type="button" class="btn-red" @click="close" aria-label="Close modal"> Cancelar </button>
+            <button type="button" class="btn btn-success" @click="confirm" aria-label="Confirmar"> Confirmar </button>
+            <button type="button" class="btn btn-danger" @click="close" aria-label="Close modal"> Cancelar </button>
           </div>
         </footer>
       </div>
@@ -55,8 +55,8 @@
 <script>
   export default {
     name: 'ModalReserva',
-    props: [ 'selected', 'habitaciones' ], //Array de rangos de fecha
-    data: function (){
+    props: ['selected', 'habitaciones'], //Array de rangos de fecha
+    data: function () {
       return {
         name: '',
         tipo: '',
@@ -79,11 +79,11 @@
           return true;
         }
       },*/
-      generarCodigo( largo ) {
+      generarCodigo(largo) {
         var result = 'R-';
         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         var charactersLength = characters.length;
-        for (let i = 0; i < largo; i++ ) {
+        for (let i = 0; i < largo; i++) {
           result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         return result;
@@ -91,86 +91,103 @@
       confirm() {
         this.ayudaNombre = '';
         this.ayudaTotal = '';
-        let yes = confirm("Esta seguro de efectuar la(s) reserva(s)?");
-        if(!yes){
-          return;
-        }
-        if(this.name === ''){
+        if (this.name === '') {
           this.ayudaNombre = '* Ingrese el nombre del reservante';
           return;
         }
-        if(document.getElementById("total").innerHTML === ''){
+        if (document.getElementById("total").innerHTML === '') {
           this.ayudaTotal = '* Por favor corrija los campos de precio erroneos';
+          return;
+        }
+        let yes = confirm("Esta seguro de efectuar la(s) reserva(s)?");
+        if (!yes) {
           return;
         }
         let codigo_reserva = this.generarCodigo(6);
         let reservas = [];
-        for(let i = 0; i < this.selected.length; i++){
+        for (let i = 0; i < this.selected.length; i++) {
           let reserva = {
             codigo: codigo_reserva,
             nombre: this.name,
             inicio: this.selected[i].start.value.split("T")[0] + " 00:00:00.000000",
             fin: this.selected[i].end.value.split("T")[0] + " 00:00:00.000000",
             habitacion: {
-              id : this.selected[i].resource
+              id: this.selected[i].resource
             },
             tipo_Reserva: this.selected[i].tipo || '',
-            fecha_reserva: new Date().toJSON().slice(0,10) + " 00:00:00.000000",
+            fecha_reserva: new Date().toJSON().slice(0, 10) + " 00:00:00.000000",
             valor: this.subtotales[i],
             valor_final: 1
           };
-          console.log("Insertando: "+ reserva.toString());
           reservas.push(reserva);
         }
         this.$emit('confirm', reservas);
       },
-      lookupPrecio(room_id){
-        for(let i = 0; i < this.habitaciones.length; i++){
-          if(this.habitaciones[i].id === room_id){
+      lookupPrecio(room_id) {
+        for (let i = 0; i < this.habitaciones.length; i++) {
+          if (this.habitaciones[i].id === room_id) {
             return this.habitaciones[i].tipo.valor;
           }
         }
       },
-      updatePrecio(){
+      updatePrecio() {
         let precios = document.getElementsByName("precio");
         let errors = document.getElementsByName("errorHelp");
-        for(var x = 0; x < errors.length; x++){
+        for (let x = 0; x < errors.length; x++) {
           errors[x].innerHTML = ''
         }
         this.subtotales = [];
         let total = 0;
-        for(let i = 0; i < precios.length; i++){
-          if(isNaN(parseInt(precios[i].value))){
+        let errorflag = false;
+        for (let i = 0; i < precios.length; i++) {
+          console.log(i + ": "+precios[i].value);
+          if (isNaN(Number(precios[i].value))) {
             console.log("oops " + i);
             errors[i].innerHTML = "* Ingrese un número positivo";
             document.getElementById("total").innerHTML = '';
-            return;
+            errorflag = true;
           }
-          let subtotal = parseInt(precios[i].value) * this.dias[i];
+          let subtotal = Number(precios[i].value) * this.dias[i];
           this.subtotales.push(subtotal);
           total += subtotal;
         }
-        document.getElementById("total").innerHTML = total.toString();
+        if(!errorflag) {
+          document.getElementById("total").innerHTML = total.toString();
+          this.ayudaTotal = '';
+        }
       },
       close() {
+        this.total = 0;
         this.$emit('close');
       },
-    },
-    computed: {
-      setPrecios(){
-        let total = 0;
-        for(let i = 0; i < this.selected.length; i++){
-          let precio = this.lookupPrecio(this.selected[i].resource);
-          const diff = Math.abs(Date.parse(this.selected[i].end) - Date.parse(this.selected[i].start));
-          const dias = Math.ceil(diff / (1000 * 3600 * 24));
+      days( sel ) {
+        this.dias = [];
+        let dias = 0;
+        let diff = 0;
+        for (let i = 0; i < this.selected.length; i++) {
+          diff = Math.abs(Date.parse(sel[i].end) - Date.parse(sel[i].start));
+          dias = Math.ceil(diff / (1000 * 3600 * 24));
           this.dias.push(dias);
-          this.preciosPorDia.push(precio);
-          this.subtotales.push(precio*dias);
-          total += this.subtotales[i];
         }
-        return total;
       },
-    }
+      setPrecios( sel ) {
+        this.preciosPorDia = [];
+        this.subtotales = [];
+        this.total = 0;
+        for (let i = 0; i < sel.length; i++) {
+          let precio = this.lookupPrecio(sel[i].resource);
+          this.preciosPorDia.push(precio);
+          this.subtotales.push(precio * this.dias[i]);
+          this.total += this.subtotales[i];
+        }
+      },
+    },
+    watch: {
+      selected: function( selection ){
+        this.days( selection);
+        this.setPrecios( selection );
+      }
+    },
   }
 </script>
 
@@ -190,6 +207,8 @@
 
   .modal-custom {
     background: #FFFFFF;
+    margin-top: 0.05vh !important;
+    margin-bottom: 0.15vh !important;
     box-shadow: 2px 2px 20px 1px;
     overflow-x: auto;
     display: flex;
