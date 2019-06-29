@@ -112,6 +112,7 @@
         }
         let yes = confirm("Esta seguro de efectuar la(s) reserva(s)?");
         if (!yes) {
+          //this.removeData();
           return;
         }
         let codigo_reserva = this.generarCodigo(6);
@@ -131,9 +132,10 @@
             valor_final: 1
           };
           reservas.push(reserva);
+          this.removeData();
         }
         this.$emit('confirm', reservas);
-        this.removeData();
+        //this.removeData();
 
       },
       lookupPrecio(room_id) {
@@ -172,6 +174,7 @@
       close() {
         this.total = 0;
         this.$emit('close');
+        this.getDefaul();
       },
       days( sel ) {
         this.dias = [];
@@ -194,6 +197,23 @@
           this.total += this.subtotales[i];
         }
       },
+      getDefaul(){
+        this.tipo = '';
+        this.name = '';
+        this.preciosPorDia = '';
+        this.ayudaNombre = '';
+        this.tipoReserva = '';
+        this.ayudaTotal = '';
+        this.subtotales = '';
+        this.total = '';
+        this.dias = '';
+        this.codigo_reserva = '';
+        this.reservas = null;
+        this.reserva = null;
+        this.inicio = null;
+        this.fin = null;
+        this.data = '';
+      }
     },
     watch: {
       selected: function( selection ){
