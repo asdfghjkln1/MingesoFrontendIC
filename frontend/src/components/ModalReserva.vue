@@ -19,9 +19,8 @@
               <label>Nombre del representante <small style="color: red">*</small></label>
               <input class="form-control" v-model="name" id="name">
               <small style="display:block; color:red;">{{ ayudaNombre }}</small>
-              <label>Tipo de reserva (Particular, Empresa)<small style="color: red">*</small></label>
+              <label>Tipo de reserva (Particular, Empresa)</label>
               <input class="form-control" v-model="tipo" id="tipo">
-              <small style="display:block; color:red;">{{ tipoReserva }}</small>
               <div class="row">
                 <div v-for="(selection, index) in selected" v-bind:key="index" class="col">
                   <label>Fecha inicio</label>
@@ -62,7 +61,6 @@
         name: '',
         tipo: '',
         ayudaNombre: '',
-        tipoReserva: '',
         ayudaTotal: '',
         preciosPorDia: [],
         subtotales: [],
@@ -92,18 +90,9 @@
       },
       confirm() {
         this.ayudaNombre = '';
-        this.tipoReserva = '';
         this.ayudaTotal = '';
         if (this.name === '') {
           this.ayudaNombre = '* Ingrese el nombre del reservante';
-          return;
-        }
-        if (this.tipo === ''){
-          this.tipoReserva = '* Ingrese un tipo de reserva';
-          return;
-        }
-        if(this.tipo != 'Particular'&& this.tipo != 'Empresa'){
-          this.tipoReserva = '* Ingrese un tipo valido';
           return;
         }
         if (document.getElementById("total").innerHTML === '') {
@@ -112,7 +101,6 @@
         }
         let yes = confirm("Esta seguro de efectuar la(s) reserva(s)?");
         if (!yes) {
-          //this.removeData();
           return;
         }
         let codigo_reserva = this.generarCodigo(6);
@@ -126,17 +114,14 @@
             habitacion: {
               id: this.selected[i].resource
             },
-            tipo_Reserva: this.tipo,
+            tipo_Reserva: this.selected[i].tipo || '',
             fecha_reserva: new Date().toJSON().slice(0, 10) + " 00:00:00.000000",
             valor: this.subtotales[i],
             valor_final: 1
           };
           reservas.push(reserva);
-          this.removeData();
         }
         this.$emit('confirm', reservas);
-        //this.removeData();
-
       },
       lookupPrecio(room_id) {
         for (let i = 0; i < this.habitaciones.length; i++) {
@@ -174,7 +159,6 @@
       close() {
         this.total = 0;
         this.$emit('close');
-        this.getDefaul();
       },
       days( sel ) {
         this.dias = [];
@@ -197,23 +181,6 @@
           this.total += this.subtotales[i];
         }
       },
-      getDefaul(){
-        this.tipo = '';
-        this.name = '';
-        this.preciosPorDia = '';
-        this.ayudaNombre = '';
-        this.tipoReserva = '';
-        this.ayudaTotal = '';
-        this.subtotales = '';
-        this.total = '';
-        this.dias = '';
-        this.codigo_reserva = '';
-        this.reservas = null;
-        this.reserva = null;
-        this.inicio = null;
-        this.fin = null;
-        this.data = '';
-      }
     },
     watch: {
       selected: function( selection ){
@@ -237,7 +204,6 @@
     justify-content: center;
     align-items: center;
   }
-
   .modal-custom {
     background: #FFFFFF;
     margin-top: 0.05vh !important;
@@ -247,34 +213,28 @@
     display: flex;
     flex-direction: column;
   }
-
   .modal-header-custom,
   .modal-footer-custom {
     padding: 15px;
     display: flex;
   }
-
   .modal-header-custom {
     border-bottom: 1px solid #eeeeee;
     color: #4AAE9B;
     justify-content: space-between;
   }
-
   .modal-footer-custom {
     border-top: 1px solid #eeeeee;
     justify-content: flex-end;
   }
-
   .modal-body-custom {
     position: relative;
     padding: 20px 20px 0px 20px;
   }
-
   #header-title{
     float: left;
     padding: 20px 0px 10px 30px;
   }
-
   .btn-close {
     border: none;
     font-size: 20px;
@@ -286,7 +246,6 @@
     background: transparent;
     margin: 10px;
   }
-
   .btn-green {
     color: white;
     width: 100px;
